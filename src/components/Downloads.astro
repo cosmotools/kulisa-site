@@ -1,0 +1,43 @@
+---
+import { downloads } from '../content/site';
+const ready = downloads.some((d) => d.url);
+const icons: Record<string, string> = {
+  macos: '<path d="M16.4 12.6c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.6.8-3.3.8-.7 0-1.7-.8-2.9-.8-1.5 0-2.9.9-3.6 2.2-1.6 2.7-.4 6.7 1.1 8.9.8 1.1 1.7 2.3 2.8 2.2 1.1 0 1.6-.7 2.9-.7 1.4 0 1.8.7 3 .7 1.2 0 2-1.1 2.7-2.2.9-1.3 1.2-2.5 1.2-2.6 0 0-2.4-.9-2.6-3.4ZM14.2 6c.6-.7 1-1.7.9-2.7-.9 0-1.9.6-2.5 1.3-.6.6-1.1 1.6-.9 2.6 1 .1 1.9-.5 2.5-1.2Z" fill="currentColor"/>',
+  windows: '<path d="M3 5.5 10.5 4.4v7.2H3zM11.5 4.3 21 3v8.6h-9.5zM3 12.6h7.5v7.2L3 18.6zM11.5 12.6H21V21l-9.5-1.3z" fill="currentColor"/>',
+  linux: '<path d="M12 3c-2 0-3.2 1.7-3.2 4 0 1.3.3 2-.6 3.4C7 12.3 5.6 14.6 6 17c-.7.5-1.6.9-1.5 1.7.1.9 1.6.8 2.6 1.4 1 .6 2 .9 2.8.4.6.4 1.4.5 2.1.5s1.5-.1 2.1-.5c.8.5 1.8.2 2.8-.4 1-.6 2.5-.5 2.6-1.4.1-.8-.8-1.2-1.5-1.7.4-2.4-1-4.7-2.2-6.6-.9-1.4-.6-2.1-.6-3.4 0-2.3-1.2-4-3.2-4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10.6" cy="7.5" r=".9" fill="currentColor"/><circle cx="13.4" cy="7.5" r=".9" fill="currentColor"/>',
+};
+---
+<div class="downloads">
+  <div class="downloads-buttons">
+    {downloads.map((d) => d.url ? (
+      <a class="dl" href={d.url}>
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" set:html={icons[d.id]} />
+        <span>Download for {d.name}</span>
+      </a>
+    ) : (
+      <span class="dl dl-soon">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" set:html={icons[d.id]} />
+        <span>{d.name}</span>
+      </span>
+    ))}
+  </div>
+  <p class="downloads-note">{ready ? 'Free.' : <><strong>Coming soon</strong> · free</>}</p>
+</div>
+
+<style>
+  .downloads { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .downloads-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .dl {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 999px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+    background: var(--text); color: var(--bg);
+  }
+  .dl:hover { opacity: 0.9; }
+  .dl-soon {
+    background: var(--surface); color: var(--muted);
+    border: 1px solid var(--line); font-weight: 500;
+  }
+  .downloads-note { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .downloads-note strong { color: var(--text); font-weight: 600; }
+</style>

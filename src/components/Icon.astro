@@ -1,0 +1,22 @@
+---
+import type { Icon } from '../content/site';
+interface Props { name: Icon; size?: number }
+const { name, size = 24 } = Astro.props;
+
+// Simple line icons, 24×24, drawn with currentColor.
+const paths: Record<Icon, string> = {
+  profiles: '<circle cx="8" cy="9" r="3"/><path d="M3 19c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="16.5" cy="8" r="2.5"/><path d="M14.5 13.3c.6-.2 1.3-.3 2-.3 2.5 0 4.5 1.8 4.5 4.5"/>',
+  grid: '<rect x="3" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/>',
+  watch: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+  pick: '<circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+  highlight: '<rect x="4" y="7" width="16" height="10" rx="2" stroke-dasharray="3 2.5"/><path d="M8 12h8"/>',
+  agent: '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="m7 10 3 2.5L7 15M12.5 15H17"/>',
+  platforms: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>',
+  timeline: '<path d="M3 12h18"/><circle cx="7" cy="12" r="1.8" fill="currentColor"/><circle cx="13" cy="12" r="1.8" fill="currentColor"/><path d="M17 8v8"/>',
+  mail: '<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m4 7.5 8 6 8-6"/>',
+  test: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7.5 15h9"/>',
+  reset: '<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/>',
+};
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={paths[name]} />
