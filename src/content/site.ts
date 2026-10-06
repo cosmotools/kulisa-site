@@ -15,7 +15,7 @@ export interface Media {
   alt?: string;
 }
 
-export type Icon = 'profiles' | 'grid' | 'watch' | 'pick' | 'highlight' | 'agent' | 'platforms' | 'workspaces' | 'projects' | 'local' | 'timeline' | 'mail' | 'test' | 'reset';
+export type Icon = 'profiles' | 'grid' | 'watch' | 'pick' | 'highlight' | 'agent' | 'platforms' | 'workspaces' | 'projects' | 'local' | 'browser' | 'signin' | 'run' | 'timeline' | 'mail' | 'test' | 'reset';
 
 export interface Feature extends Media {
   id: string;
@@ -99,7 +99,7 @@ export const features: Feature[] = [
     icon: 'profiles',
     status: 'ready',
     title: 'Profiles that stay signed in',
-    text: 'Each profile is its own person, with its own sign-ins, cookies and tabs. Close one to free its memory and open it again later, or close Kulisa and come back tomorrow: everyone is still signed in, with the same tabs open.',
+    text: 'Each profile is its own person, with its own sign-ins, cookies and tabs; name it after its account, like ann+test@shop.com. Close one to free its memory and open it again later, or close Kulisa and come back tomorrow: everyone is still signed in, with the same tabs open. The agent can add and open profiles too; deleting one always asks you first.',
     image: 'profiles.png',
     alt: 'The Profiles menu listing anna.buyer, ben.seller and cleo.admin, next to the buyer’s and the seller’s pages.',
   },
@@ -117,7 +117,7 @@ export const features: Feature[] = [
     icon: 'pick',
     status: 'ready',
     title: 'Point and tell',
-    text: 'Click Pick, then click the thing on the page. An exact reference to it lands in the agent’s prompt, and you write the rest: what’s wrong, what you expected. Pick in several panes for one message: “sent here, didn’t arrive there”.',
+    text: 'Click Pick, then click the thing on the page. An exact reference to it lands in the agent’s prompt, and you write the rest: what’s wrong, what you expected. The agent looks at that page itself, its errors and failed requests included. Pick in several panes for one message: “sent here, didn’t arrive there”.',
     image: 'pick.png',
     alt: 'Picking a row in the seller’s page: the cell is outlined, and a reference to the item picked in the buyer’s page is already in the agent’s prompt.',
   },
@@ -136,7 +136,7 @@ export const features: Feature[] = [
     status: 'ready',
     wide: true,
     title: 'Several tasks at once',
-    text: 'Start a workspace for each task: its own copy of the project on a branch of its own, its own agent, and copies of everyone’s profiles, still signed in. One agent fixes checkout while another works on something else; switch between them with a click.',
+    text: 'Start a workspace for each task: its own copy of the project on a branch of its own, its own agent, and copies of everyone’s profiles, still signed in. One agent fixes checkout while another works on something else; switch between them with a click. With Claude Code, a dot on each workspace tells you whether its agent is working, waiting for you, or done.',
     image: 'workspaces.png',
     alt: 'A workspace named one-order next to main: its agent fixed checkout, placed an order as the buyer and outlined the single new order for the seller and the admin.',
   },
@@ -164,6 +164,20 @@ export const features: Feature[] = [
 // Smaller things, shown as cards without media.
 export const more: Feature[] = [
   {
+    id: 'signin',
+    icon: 'signin',
+    status: 'ready',
+    title: 'Work sign-ins that hold',
+    text: 'Company sign-ins work in a profile and last across restarts: Microsoft’s is tested, including ones passed on to another company’s sign-in. The sign-ins they keep only while the browser is open are saved encrypted with your system’s keychain.',
+  },
+  {
+    id: 'browser',
+    icon: 'browser',
+    status: 'ready',
+    title: 'A real browser in every pane',
+    text: 'Tabs, an address bar, back and forward, DevTools for any tab, and zoom per site. Links that open a new window stay in the same profile.',
+  },
+  {
     id: 'projects',
     icon: 'projects',
     status: 'ready',
@@ -182,11 +196,18 @@ export const more: Feature[] = [
     icon: 'local',
     status: 'ready',
     title: 'Yours, on your computer',
-    text: 'No account and no cloud of Kulisa’s own. Profiles and sign-ins stay on your machine.',
+    text: 'No account and no cloud of Kulisa’s own. Profiles and sign-ins stay on your machine, outside your project’s folder, so they never end up in its code.',
   },
 ];
 
 export const later: Feature[] = [
+  {
+    id: 'run',
+    icon: 'run',
+    status: 'coming',
+    title: 'Your app in every workspace',
+    text: 'Help for the agent to start your app on each workspace’s own address, and open the profiles there once it answers.',
+  },
   {
     id: 'timeline',
     icon: 'timeline',
@@ -240,6 +261,10 @@ export const faq = [
     a: 'No. A person always signs in, by hand. While a profile is on a sign-in page, the agent steps away from that profile until you are done.',
   },
   {
+    q: 'Do company sign-ins work?',
+    a: 'Microsoft sign-ins are tested, including ones passed on to another company’s sign-in page. You sign in by hand in a profile, as in Chrome, and the sign-in lasts across restarts. Each profile presents itself to websites as Google Chrome.',
+  },
+  {
     q: 'Where is my data?',
     a: 'On your computer. Profiles, sign-ins and the things you point at stay on your machine; Kulisa has no account and no cloud of its own. What your agent reads is sent to the AI service that agent uses, as it would be anywhere else.',
   },
@@ -255,5 +280,6 @@ export const forDevelopers = [
   'The agent drives profiles through Kulisa’s MCP server: Playwright-based tools that take a profile id. <code>@playwright/mcp</code> also works through a per-profile CDP proxy, without a remote-debugging port.',
   'Claude Code starts with a Kulisa plugin (MCP config, a skill on profiles, hooks); Codex gets the MCP server as a config override. Other CLI agents run unchanged in a real terminal, started in your shell in the project’s folder (direnv, nvm and mise apply), and find the server in <code>KULISA_MCP_URL</code>.',
   'A pick types a reference into the agent’s prompt: the profile, the tab and a Playwright locator. The agent looks at the live page with its tools, including that tab’s console messages and network requests.',
+  'Profiles present as Google Chrome of the same engine version (User-Agent, <code>Sec-CH-UA*</code>, <code>navigator.userAgentData</code>). Session cookies are kept across restarts, encrypted with the OS keyring (<code>safeStorage</code>).',
   'A workspace is a git worktree on its own branch next to the project (<code>myshop@task</code>), with copies of main’s profiles and its own agent session and MCP URL. Its app runs on its own ports: <code>KULISA_PORT_OFFSET</code> is in the agent’s environment.',
 ];

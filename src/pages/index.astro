@@ -193,12 +193,12 @@ const year = new Date().getFullYear();
     background: var(--surface); border: 1px solid var(--line); color: var(--text);
   }
 
-  .more { list-style: none; padding: 0; margin: 88px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .more { list-style: none; padding: 0; margin: 88px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
   .more li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
   .more h3 { margin-top: 16px; }
 
   .later { background: var(--surface-2); }
-  .later-list { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .later-list { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
   .later-list li { background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); padding: 24px; }
   .later-list h3 { margin-top: 16px; }
 
