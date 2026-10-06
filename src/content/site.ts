@@ -30,8 +30,8 @@ export interface Feature extends Media {
 export const meta = {
   title: 'Kulisa — be every user of your web app at once',
   description:
-    'Kulisa shows several browser profiles side by side in one window, each signed in as a different person. ' +
-    'Work as the buyer and the seller at once, and let an AI agent help while you watch. Free, for macOS, Windows and Linux.',
+    'See your web app as several people at once: browser profiles side by side in one window, ' +
+    'with an AI agent you can watch. Free for macOS, Windows and Linux.',
 };
 
 export const links = {

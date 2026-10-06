@@ -2,17 +2,34 @@
 import '../styles/global.css';
 import { meta } from '../content/site';
 
+interface Props { title?: string; noindex?: boolean }
+const { title = meta.title, noindex = false } = Astro.props;
+
 const url = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
+
+// Structured data for search engines: what the app is, where it runs, that it is free.
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Kulisa',
+  description: meta.description,
+  url: Astro.site?.href,
+  image: ogImage.href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'macOS, Windows, Linux',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: { '@type': 'Organization', name: 'cosmotools' },
+};
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{meta.title}</title>
+    <title>{title}</title>
     <meta name="description" content={meta.description} />
-    <link rel="canonical" href={url} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={url} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -33,6 +50,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <meta name="twitter:title" content={meta.title} />
     <meta name="twitter:description" content={meta.description} />
     <meta name="twitter:image" content={ogImage} />
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(app)} />}
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
