@@ -29,5 +29,30 @@ Chrome at 1200×630, `node tools/favicon-ico.mjs` for `favicon.ico`, `apple-touc
 
 ## Deploy
 
-Every push to `main` builds the site and deploys it to GitHub Pages (`.github/workflows/deploy.yml`). The custom
-domain `kulisa.app` is set in the repository's Pages settings.
+The site lives at **https://kulisa.app**, served by GitHub Pages from
+[`cosmotools/kulisa-site`](https://github.com/cosmotools/kulisa-site).
+
+Every push to `main` builds the site and deploys it (`.github/workflows/deploy.yml`: a `build` job, then a
+`deploy` job). Watch runs in the repository's Actions tab.
+
+Settings that make it work (already done, listed for reference):
+
+- **Settings → Pages:** Source *GitHub Actions*, custom domain `kulisa.app`, *Enforce HTTPS* on. The certificate
+  is issued and renewed by GitHub (Let's Encrypt). No `CNAME` file is needed with Actions deploys.
+- **DNS** (at INWX):
+
+  | Type  | Name | Value                                                      |
+  |-------|------|------------------------------------------------------------|
+  | A     | @    | 185.199.108.153, .109.153, .110.153, .111.153              |
+  | AAAA  | @    | 2606:50c0:8000::153, 8001::153, 8002::153, 8003::153       |
+  | CNAME | www  | cosmotools.github.io                                       |
+
+### If something goes wrong
+
+- **Push rejected: "refusing to allow a Personal Access Token to create or update workflow":** the token needs
+  the *Workflows: Read and write* permission (fine-grained) or the `workflow` scope (classic), besides
+  *Contents: Read and write*.
+- **A run stays "queued" or fails with "The job was not acquired by Runner":** a GitHub Actions outage, not the
+  site. Check https://www.githubstatus.com and use *Re-run failed jobs* once it is over.
+- **No certificate / "Enforce HTTPS" unavailable:** wait up to an hour after the DNS check passes; if it still
+  does not appear, clear the custom domain in Settings → Pages, save, and enter `kulisa.app` again.

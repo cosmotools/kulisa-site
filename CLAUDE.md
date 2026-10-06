@@ -35,7 +35,8 @@ accounts — and developers too. Write so a non-programmer understands every lin
 - **Hosting:** GitHub Pages, public repo `github.com/cosmotools/kulisa-site`, deployed by GitHub Actions with the
   official `actions/configure-pages`, `actions/upload-pages-artifact` and `actions/deploy-pages`, on every push
   to `main`. Custom domain `kulisa.app` is set in the repo's Pages settings, so the site is served from the root:
-  `site: 'https://kulisa.app'`, no `base`. No `CNAME` file needed with Actions deploys.
+  `site: 'https://kulisa.app'`, no `base`. No `CNAME` file needed with Actions deploys. Live since 2026-10-06,
+  HTTPS enforced; DNS is at INWX (records in `README.md`).
 - **Download:** no installers are public yet. Show a clear "Coming soon" for macOS, Windows and Linux. No email
   form, no waitlist. Later the button will link to GitHub Releases of `cosmotools/kulisa`; keep it one place to
   change.
@@ -97,9 +98,8 @@ optimizes them.
 
 ## Working rules
 
-- Commit locally when a step is done. **Never push, create the GitHub repo, or change DNS**: the author does all
-  outward-facing steps. When the site is ready, write the author a short checklist for them: create the repo,
-  push, Settings → Pages → Source: GitHub Actions, custom domain `kulisa.app`, Enforce HTTPS.
+- Commit locally when a step is done. **Push only when the author asks** (a push to `main` deploys the live
+  site). **Never change GitHub settings or DNS**: the author does those.
 - Check the result in a browser at phone and desktop widths before calling it done.
 - Keep a `README.md` with how to run (`npm run dev`, `npm run build`) and how deploys work.
 
