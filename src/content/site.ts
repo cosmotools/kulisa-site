@@ -35,7 +35,6 @@ export const meta = {
 };
 
 export const links = {
-  github: 'https://github.com/cosmotools',
   repo: 'https://github.com/cosmotools/kulisa',
   // Later: 'https://github.com/cosmotools/kulisa/releases'
   releases: '',
