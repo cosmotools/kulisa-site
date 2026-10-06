@@ -15,11 +15,12 @@ npm run preview   # serves dist/ to check the build
 
 All copy, links and media slots are in `src/content/site.ts`:
 
-- **Feature videos:** put `pick.mp4` in `public/media/` and a poster frame `pick.jpg` in `src/assets/`, then set
-  `video: 'pick.mp4', poster: 'pick.jpg'` on that feature. An image instead: `image: 'pick.png'` (in `src/assets/`).
-  Without media, a feature shows a placeholder of the same 16:9 size.
-- **Hero:** set `hero.media.image` (e.g. a window screenshot in `src/assets/`) or `hero.media.video`; until then
-  the page shows a drawn illustration of the window (`src/components/StageIllustration.astro`).
+- **Feature media:** put `pick.mp4` in `public/media/` and a poster frame `pick.jpg` in `src/assets/`, then set
+  `video: 'pick.mp4', poster: 'pick.jpg'` on that feature. An image instead: `image: 'pick.png'` (in `src/assets/`),
+  shown at its own proportions. Without media, a feature shows a 16:9 placeholder. Features in `more` are small cards.
+- **Hero:** `hero.media.image` (the window screenshot, `src/assets/hero-window.png`) or `hero.media.video`.
+- **Screenshots:** taken from a Kulisa with its own data folder (never the author's), on a demo shop driven by a real
+  Claude Code; full windows keep their transparent rounded corners (PNG with alpha), crops are opaque.
 - **Downloads:** fill in the `url` of each platform in `downloads`. Empty links show "Coming soon".
 - **Logo:** the app's icon (from `kulisa/assets/icon.svg`, copied to `tools/app-icon.svg`) next to a text
   wordmark: `src/components/Mark.astro`, `public/favicon.svg`. `logo.mark: false` hides the icon.

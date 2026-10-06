@@ -1,7 +1,8 @@
 // All of the page's content lives here. To add media, drop the file in place and set one field:
 // - images and video posters: src/assets/ (optimized by Astro), set e.g. `image: 'pick.png'`
 // - videos: public/media/, set e.g. `video: 'pick.mp4'` (and `poster: 'pick.jpg'` from src/assets/)
-// A slot with no media shows a calm placeholder of the same size.
+// A slot with no media shows a calm placeholder (16:9). Images keep their own proportions.
+// The screenshots are of a demo shop (Hearth & Co) in a Kulisa with its own data folder, driven by a real Claude Code.
 
 export interface Media {
   /** File in src/assets/ (png, jpg, webp, avif). */
@@ -14,7 +15,7 @@ export interface Media {
   alt?: string;
 }
 
-export type Icon = 'profiles' | 'grid' | 'watch' | 'pick' | 'highlight' | 'agent' | 'platforms' | 'timeline' | 'mail' | 'test' | 'reset';
+export type Icon = 'profiles' | 'grid' | 'watch' | 'pick' | 'highlight' | 'agent' | 'platforms' | 'workspaces' | 'projects' | 'local' | 'timeline' | 'mail' | 'test' | 'reset';
 
 export interface Feature extends Media {
   id: string;
@@ -22,6 +23,8 @@ export interface Feature extends Media {
   text: string;
   icon: Icon;
   status: 'ready' | 'coming';
+  /** Text above and the media at the full width of the page (for screenshots of the whole window). */
+  wide?: boolean;
 }
 
 export const meta = {
@@ -54,8 +57,9 @@ export const hero = {
     'Be the buyer and the seller, the sender and the receiver, the admin and the user — ' +
     'and let an AI agent work through them while you watch.',
   media: {
-    // A real window screenshot goes here, e.g. image: 'kulisa-window.png'. Until then: an illustration.
-    alt: 'The Kulisa window: three people’s browsers side by side, with the agent’s terminal below.',
+    image: 'hero-window.png',
+    alt: 'The Kulisa window: a shop open as a buyer, a seller and an admin side by side. The agent placed an order as the buyer, ' +
+      'outlined the new orders in the seller’s and the admin’s pages, and reports below in its terminal.',
   } as Media,
 };
 
@@ -85,7 +89,7 @@ export const steps = [
   {
     label: 'The wings',
     title: 'An agent you can watch',
-    text: 'An AI agent runs in a terminal inside the window and can click and type in any profile. You see every step, and you can point at anything on a page to tell it what’s wrong.',
+    text: 'An AI agent of your choice runs in a terminal inside the window and can click and type in any profile. You see every step, and you can point at anything on a page to tell it what’s wrong.',
   },
 ];
 
@@ -95,14 +99,9 @@ export const features: Feature[] = [
     icon: 'profiles',
     status: 'ready',
     title: 'Profiles that stay signed in',
-    text: 'Each profile is its own person, with its own sign-ins, cookies and tabs. Close Kulisa, open it tomorrow: everyone is still signed in, with the same tabs open.',
-  },
-  {
-    id: 'grid',
-    icon: 'grid',
-    status: 'ready',
-    title: 'A grid you arrange',
-    text: 'Drag panes side by side, stack them as tabs, resize them. Pick a ready-made layout — profiles in columns, two by two, or one at a time — and Kulisa remembers yours.',
+    text: 'Each profile is its own person, with its own sign-ins, cookies and tabs. Close one to free its memory and open it again later, or close Kulisa and come back tomorrow: everyone is still signed in, with the same tabs open.',
+    image: 'profiles.png',
+    alt: 'The Profiles menu listing anna.buyer, ben.seller and cleo.admin, next to the buyer’s and the seller’s pages.',
   },
   {
     id: 'watch',
@@ -110,13 +109,17 @@ export const features: Feature[] = [
     status: 'ready',
     title: 'See what the agent does',
     text: 'Every click and keystroke the agent makes is marked on the page, and a caption on the pane says what it is doing right now. Nothing happens off stage.',
+    image: 'watch.png',
+    alt: 'The agent clicks “Add to cart” in the buyer’s page: the button is outlined, the click is marked, and the pane says “agent: click”.',
   },
   {
     id: 'pick',
     icon: 'pick',
     status: 'ready',
     title: 'Point and tell',
-    text: 'Click Pick, then click the thing on the page. The agent gets an exact reference to it, with a snapshot of that moment; you add what’s wrong. Pick in several panes for one message: “sent here, didn’t arrive there”.',
+    text: 'Click Pick, then click the thing on the page. An exact reference to it lands in the agent’s prompt, and you write the rest: what’s wrong, what you expected. Pick in several panes for one message: “sent here, didn’t arrive there”.',
+    image: 'pick.png',
+    alt: 'Picking a row in the seller’s page: the cell is outlined, and a reference to the item picked in the buyer’s page is already in the agent’s prompt.',
   },
   {
     id: 'highlight',
@@ -124,13 +127,48 @@ export const features: Feature[] = [
     status: 'ready',
     title: 'The agent points back',
     text: 'When the agent wants to show you something, it outlines it right on the page, with a label on the pane, until you click or type there.',
+    image: 'highlight.png',
+    alt: 'The new orders outlined by the agent in the seller’s and the admin’s pages, with “agent: points at” captions on both panes.',
+  },
+  {
+    id: 'workspaces',
+    icon: 'workspaces',
+    status: 'ready',
+    wide: true,
+    title: 'Several tasks at once',
+    text: 'Start a workspace for each task: its own copy of the project on a branch of its own, its own agent, and copies of everyone’s profiles, still signed in. One agent fixes checkout while another works on something else; switch between them with a click.',
+    image: 'workspaces.png',
+    alt: 'A workspace named one-order next to main: its agent fixed checkout, placed an order as the buyer and outlined the single new order for the seller and the admin.',
   },
   {
     id: 'agent',
     icon: 'agent',
     status: 'ready',
-    title: 'Works with the agent you already use',
-    text: 'Claude Code is set up out of the box. Other agents that run in a terminal, such as Codex, can connect too. Kulisa doesn’t replace your agent; it gives it a stage.',
+    title: 'The agent you choose',
+    text: 'Claude Code, Codex, or just a terminal, chosen per workspace. If the agent isn’t on your computer yet, Kulisa installs it for you with its maker’s own installer: no commands to type. Kulisa doesn’t replace your agent; it gives it a stage.',
+    image: 'agents.png',
+    alt: 'The “Choose the agent” dialog: Claude Code by Anthropic, Codex by OpenAI, or the terminal only.',
+  },
+  {
+    id: 'grid',
+    icon: 'grid',
+    status: 'ready',
+    wide: true,
+    title: 'A grid you arrange',
+    text: 'Drag panes side by side, stack them as tabs, resize them. Pick a ready-made layout — profiles in columns, two by two, or one at a time — and Kulisa remembers yours.',
+    image: 'grid.png',
+    alt: 'Two profiles stacked on the left, the seller in the middle and the agent’s terminal on the right.',
+  },
+];
+
+// Smaller things, shown as cards without media.
+export const more: Feature[] = [
+  {
+    id: 'projects',
+    icon: 'projects',
+    status: 'ready',
+    title: 'A stage per project',
+    text: 'Each project keeps its own profiles, layout and agent conversation. Switch to another and back: you continue where you left off.',
   },
   {
     id: 'platforms',
@@ -138,6 +176,13 @@ export const features: Feature[] = [
     status: 'ready',
     title: 'macOS, Windows and Linux',
     text: 'One app, the same on all three.',
+  },
+  {
+    id: 'local',
+    icon: 'local',
+    status: 'ready',
+    title: 'Yours, on your computer',
+    text: 'No account and no cloud of Kulisa’s own. Profiles and sign-ins stay on your machine.',
   },
 ];
 
@@ -188,7 +233,7 @@ export const faq = [
   },
   {
     q: 'Which agents work?',
-    a: 'Claude Code works out of the box: Kulisa starts it with everything it needs. Other agents that run in a terminal, such as Codex, can connect too.',
+    a: 'Claude Code and Codex: pick one for each workspace, and Kulisa installs it if it’s missing. Claude Code gets the most help from Kulisa today. Other agents that run in a terminal can connect too.',
   },
   {
     q: 'Does the agent ever sign in for me?',
@@ -208,6 +253,7 @@ export const faq = [
 export const forDevelopers = [
   'Each profile is a persistent Chromium session of its own (cookies, storage, tabs), in an Electron window.',
   'The agent drives profiles through Kulisa’s MCP server: Playwright-based tools that take a profile id. <code>@playwright/mcp</code> also works through a per-profile CDP proxy, without a remote-debugging port.',
-  'Claude Code starts with a Kulisa plugin (MCP config, a skill on profiles, hooks). Other CLI agents run unchanged in a real terminal and find the server in <code>KULISA_MCP_URL</code>.',
-  'A pick sends the agent a locator it can act on and a details file: outerHTML, key styles, a cropped screenshot, recent console errors and failed requests.',
+  'Claude Code starts with a Kulisa plugin (MCP config, a skill on profiles, hooks); Codex gets the MCP server as a config override. Other CLI agents run unchanged in a real terminal, started in your shell in the project’s folder (direnv, nvm and mise apply), and find the server in <code>KULISA_MCP_URL</code>.',
+  'A pick types a reference into the agent’s prompt: the profile, the tab and a Playwright locator. The agent looks at the live page with its tools, including that tab’s console messages and network requests.',
+  'A workspace is a git worktree on its own branch next to the project (<code>myshop@task</code>), with copies of main’s profiles and its own agent session and MCP URL. Its app runs on its own ports: <code>KULISA_PORT_OFFSET</code> is in the agent’s environment.',
 ];

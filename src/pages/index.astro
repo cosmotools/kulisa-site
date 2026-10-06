@@ -4,8 +4,7 @@ import Media from '../components/Media.astro';
 import Icon from '../components/Icon.astro';
 import Mark from '../components/Mark.astro';
 import Downloads from '../components/Downloads.astro';
-import StageIllustration from '../components/StageIllustration.astro';
-import { hero, problem, steps, features, later, faq, forDevelopers, links, logo } from '../content/site';
+import { hero, problem, steps, features, more, later, faq, forDevelopers, links, logo } from '../content/site';
 
 const year = new Date().getFullYear();
 ---
@@ -29,13 +28,9 @@ const year = new Date().getFullYear();
           <p class="hero-sub">{hero.sub}</p>
           <Downloads />
         </div>
-        <div class="hero-media">
-          {hero.media.image || hero.media.video ? (
-            <Media media={hero.media} eager sizes="(min-width: 1120px) 1080px, 100vw" />
-          ) : (
-            <StageIllustration label={hero.media.alt ?? ''} />
-          )}
-        </div>
+      </div>
+      <div class="hero-media">
+        <Media media={hero.media} eager sizes="(min-width: 1280px) 1240px, 100vw" />
       </div>
     </section>
 
@@ -75,16 +70,25 @@ const year = new Date().getFullYear();
         <h2 id="features-title" class="section-title">What Kulisa does today</h2>
         <div class="feature-list">
           {features.map((f) => (
-            <article class="feature" id={f.id}>
+            <article class:list={['feature', { wide: f.wide }]} id={f.id}>
               <div class="feature-text">
                 <span class="feature-icon"><Icon name={f.icon} /></span>
                 <h3>{f.title}</h3>
                 <p>{f.text}</p>
               </div>
-              <Media media={f} icon={f.icon} />
+              <Media media={f} icon={f.icon} sizes={f.wide ? '(min-width: 1120px) 1080px, 100vw' : undefined} />
             </article>
           ))}
         </div>
+        <ul class="more">
+          {more.map((f) => (
+            <li>
+              <span class="feature-icon"><Icon name={f.icon} /></span>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
 
@@ -153,7 +157,8 @@ const year = new Date().getFullYear();
   .hero-text { max-width: 780px; margin: 0 auto; }
   .hero h1 { font-size: clamp(2.3rem, 6vw, 4rem); letter-spacing: -0.035em; }
   .hero-sub { color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.25rem); margin: 20px auto 32px; max-width: 36em; }
-  .hero-media { margin: 56px auto 0; max-width: 1080px; position: relative; }
+  .hero-media { margin: 56px auto 0; width: min(1240px, 100% - 40px); position: relative; }
+  .hero-media :global(.media) { border: 0; border-radius: 10px; background: none; box-shadow: var(--shadow-hero); }
   .hero-media::before {
     content: ''; position: absolute; inset: 10% -10% -20%; z-index: -1;
     background: radial-gradient(closest-side, var(--glow), transparent);
@@ -162,8 +167,8 @@ const year = new Date().getFullYear();
   .problem { background: var(--surface-2); }
   .points { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .points li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
-  .points h3, .steps h3, .later-list h3 { font-size: 1.1rem; margin-bottom: 8px; }
-  .points p, .steps p, .later-list p { color: var(--muted); font-size: 1rem; }
+  .points h3, .steps h3, .later-list h3, .more h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .points p, .steps p, .later-list p, .more p { color: var(--muted); font-size: 1rem; }
 
   .steps { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
   .steps li { position: relative; padding-top: 20px; border-top: 1px solid var(--line); }
@@ -179,12 +184,18 @@ const year = new Date().getFullYear();
   .feature { display: grid; grid-template-columns: 5fr 7fr; gap: 56px; align-items: center; scroll-margin-top: 24px; }
   .feature:nth-child(even) { grid-template-columns: 7fr 5fr; }
   .feature:nth-child(even) .feature-text { order: 2; }
+  .feature.wide { grid-template-columns: 1fr; gap: 32px; }
+  .feature.wide .feature-text { order: 0; max-width: 680px; margin: 0 auto; text-align: center; }
   .feature h3 { font-size: 1.5rem; margin: 16px 0 12px; }
   .feature p { color: var(--muted); }
   .feature-icon {
     display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px;
     background: var(--surface); border: 1px solid var(--line); color: var(--text);
   }
+
+  .more { list-style: none; padding: 0; margin: 88px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .more li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .more h3 { margin-top: 16px; }
 
   .later { background: var(--surface-2); }
   .later-list { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
@@ -214,7 +225,7 @@ const year = new Date().getFullYear();
   .foot a:hover { color: var(--text); }
 
   @media (max-width: 900px) {
-    .points, .steps { grid-template-columns: 1fr; }
+    .points, .steps, .more { grid-template-columns: 1fr; }
     .later-list { grid-template-columns: repeat(2, 1fr); }
     .feature, .feature:nth-child(even) { grid-template-columns: 1fr; gap: 24px; }
     .feature:nth-child(even) .feature-text { order: 0; }
