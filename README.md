@@ -11,6 +11,10 @@ npm run build     # static site in dist/
 npm run preview   # serves dist/ to check the build
 ```
 
+`npm run dev` starts the server in the background: `npx astro dev status`, `npx astro dev logs`,
+`npx astro dev stop`. The floating bar at the bottom of the page in dev is Astro's dev toolbar; it is not in the
+built site.
+
 ## Content
 
 All copy, links and media slots are in `src/content/site.ts`:
@@ -26,7 +30,10 @@ All copy, links and media slots are in `src/content/site.ts`:
   wordmark: `src/components/Mark.astro`, `public/favicon.svg`. `logo.mark: false` hides the icon.
 
 `public/og.png` (the social card) and the icons are rendered from `tools/`: `tools/og.html` with headless
-Chrome at 1200×630, `node tools/favicon-ico.mjs` for `favicon.ico`, `apple-touch-icon.png` from `tools/touch.svg`.
+Chrome at 1200×630, `node tools/favicon-ico.mjs` for `favicon.ico`, `apple-touch-icon.png` from `tools/touch.svg`;
+`tools/icon.html` shows `public/favicon.svg` full-window, for rendering it to PNG with headless Chrome.
+
+**GitHub links** (header and footer) go to the app's repository, `links.repo` in `src/content/site.ts`.
 
 ## Deploy
 
