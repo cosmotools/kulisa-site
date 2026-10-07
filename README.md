@@ -43,6 +43,12 @@ The site lives at **https://kulisa.app**, served by GitHub Pages from
 Every push to `main` builds the site and deploys it (`.github/workflows/deploy.yml`: a `build` job, then a
 `deploy` job). Watch runs in the repository's Actions tab.
 
+The header shows the app repository's GitHub stars once there are at least `stars.showFrom` (in
+`src/content/site.ts`). The count is fetched once at build time (`src/lib/stars.ts`), so visitors make no
+request to GitHub; if GitHub can't be reached, the link shows without a count. To keep the count fresh, the
+workflow also rebuilds every Monday at 06:00 UTC. GitHub pauses scheduled workflows in a repository with no
+activity for 60 days; a push or a manual run turns them back on.
+
 Settings that make it work (already done, listed for reference):
 
 - **Settings → Pages:** Source *GitHub Actions*, custom domain `kulisa.app`, *Enforce HTTPS* on. The certificate

@@ -40,6 +40,10 @@ export const links = {
   releases: '',
 };
 
+// The repo's GitHub stars, shown next to the header's GitHub link once there are at least this many
+// (the count is taken at build time; the site rebuilds weekly). 0 always shows it, Infinity never does.
+export const stars = { showFrom: 20 };
+
 // The one place with download links. An empty link shows "Coming soon".
 export const downloads: { id: 'macos' | 'windows' | 'linux'; name: string; url: string }[] = [
   { id: 'macos', name: 'macOS', url: '' },
