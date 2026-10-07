@@ -28,10 +28,10 @@ export interface Feature extends Media {
 }
 
 export const meta = {
-  title: 'Kulisa — be every user of your web app at once',
+  title: 'Kulisa — your AI agent works until it’s done',
   description:
-    'See your web app as several people at once: browser profiles side by side in one window, ' +
-    'with an AI agent you can watch. Free for macOS, Windows and Linux.',
+    'Your AI agent works in your signed-in browsers, side by side: it checks the result as every user and fixes ' +
+    'until it works. Watch, or take a break. Free for macOS, Windows and Linux.',
 };
 
 export const links = {
@@ -55,11 +55,11 @@ export const downloads: { id: 'macos' | 'windows' | 'linux'; name: string; url: 
 export const logo = { mark: true };
 
 export const hero = {
-  pitch: 'Be every user of your web app at once.',
+  pitch: 'Your AI agent works until it’s done. Watch every step, or take a break.',
   sub:
-    'Kulisa puts several browsers side by side in one window, each signed in as a different person. ' +
-    'Be the buyer and the seller, the sender and the receiver, the admin and the user — ' +
-    'and let an AI agent work through them while you watch.',
+    'Kulisa puts several browsers side by side in one window, each signed in as a different person, and an AI agent ' +
+    'of your choice to work in them. It does the work, checks the result as every user — the buyer and the seller, ' +
+    'the sender and the receiver, the admin and the user — fixes what’s wrong, and goes again until it works.',
   media: {
     image: 'hero-window.png',
     alt: 'The Kulisa window: a shop open as a buyer, a seller and an admin side by side. The agent placed an order as the buyer, ' +

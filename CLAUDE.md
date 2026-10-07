@@ -48,9 +48,9 @@ accounts — and developers too. Write so a non-programmer understands every lin
 One page. Suggested sections, adjust if a better order appears:
 
 1. **Hero:** the name, a one-line pitch, a short sub-line, the window screenshot, "Coming soon" + platforms.
-   Draft pitches for the author to choose from or improve:
-   - "Be every user of your web app at once."
-   - "All your app's users, side by side, in one window."
+   The pitch (the author's, 2026-10-07): "Your AI agent works until it's done. Watch every step, or take a break."
+   The loop is the point: the agent does the work, checks the result as every user, fixes, and goes again. Before,
+   "Be every user of your web app at once."
 2. **The problem:** testing anything where several people interact means a pile of browser windows, private
    tabs and sign-ins, and keeping the connections in your head.
 3. **How it works:** profiles (each its own signed-in person) → panes side by side → an agent you can watch and
