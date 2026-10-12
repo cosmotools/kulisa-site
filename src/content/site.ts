@@ -31,26 +31,27 @@ export const meta = {
   title: 'Kulisa — your AI agent works until it’s done',
   description:
     'Your AI agent works in your signed-in browsers, side by side: it checks the result as every user and fixes ' +
-    'until it works. Watch, or take a break. Free for macOS, Windows and Linux.',
+    'until it works. Watch, or take a break. Free for Windows and Linux; macOS soon.',
 };
 
 export const links = {
   repo: 'https://github.com/cosmotools/kulisa',
   // The user guide, rendered from the app repository's docs/guide.md (src/pages/docs.astro).
   docs: '/docs',
-  // Later: 'https://github.com/cosmotools/kulisa/releases'
-  releases: '',
+  releases: 'https://github.com/cosmotools/kulisa/releases',
 };
 
 // The repo's GitHub stars, shown next to the header's GitHub link once there are at least this many
 // (the count is taken at build time; the site rebuilds weekly). 0 always shows it, Infinity never does.
 export const stars = { showFrom: 20 };
 
-// The one place with download links. An empty link shows "Coming soon".
-export const downloads: { id: 'macos' | 'windows' | 'linux'; name: string; url: string }[] = [
-  { id: 'macos', name: 'macOS', url: '' },
-  { id: 'windows', name: 'Windows', url: '' },
-  { id: 'linux', name: 'Linux', url: '' },
+// The one place with the download buttons: each a file of the app's latest release, found by its name's ending
+// (src/lib/release.ts, at build time). No file: "Coming soon".
+export const downloads: { id: string; os: 'macos' | 'windows' | 'linux'; name: string; file: RegExp | null }[] = [
+  { id: 'windows', os: 'windows', name: 'Windows', file: /\.Setup\.exe$/i },
+  { id: 'deb', os: 'linux', name: 'Linux (.deb)', file: /_amd64\.deb$/ },
+  { id: 'rpm', os: 'linux', name: 'Linux (.rpm)', file: /\.x86_64\.rpm$/ },
+  { id: 'macos', os: 'macos', name: 'macOS', file: null },
 ];
 
 // The logo: the app's icon (src/components/Mark.astro) and a text wordmark; `mark: false` shows the wordmark only.
@@ -194,8 +195,8 @@ export const more: Feature[] = [
     id: 'platforms',
     icon: 'platforms',
     status: 'ready',
-    title: 'macOS, Windows and Linux',
-    text: 'One app, the same on all three.',
+    title: 'Windows and Linux, macOS soon',
+    text: 'One app, the same on each. On Windows it updates itself.',
   },
   {
     id: 'local',
@@ -251,8 +252,8 @@ export const faq = [
     a: 'Yes. Kulisa is free.',
   },
   {
-    q: 'When can I download it?',
-    a: 'Soon. Installers for macOS, Windows and Linux are on the way, and the download buttons on this page will work as soon as they are ready.',
+    q: 'How do I install it?',
+    a: 'Windows: run the installer. It is not signed yet, so Windows warns about it: More info → Run anyway. It installs for you alone and updates itself from then on. Linux: the .deb for Ubuntu and Debian, the .rpm for Fedora; install a new version the same way. macOS is coming.',
   },
   {
     q: 'Do I need to be a developer?',
@@ -276,7 +277,7 @@ export const faq = [
   },
   {
     q: 'Which platforms?',
-    a: 'macOS, Windows and Linux.',
+    a: 'Windows and Linux now, macOS soon.',
   },
 ];
 
