@@ -1,0 +1,18 @@
+---
+import { links } from '../content/site';
+
+const year = new Date().getFullYear();
+---
+<footer class="foot">
+  <div class="wrap">
+    <p>© {year} cosmotools · <a href={links.docs}>Docs</a> · <a href={links.repo} target="_blank" rel="noopener">GitHub</a></p>
+    <p class="name-note"><i lang="ru">Кулиса</i> is Russian for the wings of a theatre stage.</p>
+  </div>
+</footer>
+
+<style>
+  .foot { border-top: 1px solid var(--line); padding: 32px 0 40px; color: var(--muted); font-size: 0.92rem; }
+  .foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+  .foot a { color: var(--muted); }
+  .foot a:hover { color: var(--text); }
+</style>

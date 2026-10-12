@@ -7,8 +7,11 @@ it are the author's and are settled. Ask the author before changing any of them.
 
 Read these in `../kulisa` (the app's repository). **Read only: never change anything there.**
 
+- `docs/guide.md`: the user guide, what the app does in the user's words: the best source for the site's copy.
+  The site shows it as it is at `/docs` (below).
+- `docs/profiles.md`, `docs/tasks.md`, `docs/window.md`: what is built, in detail.
 - `docs/SPEC.md`: the product, the name, features and phases.
-- `docs/ROADMAP.md`: what is built (section "Done") and what is not yet.
+- `docs/ROADMAP.md`: what is not built yet (Next, Deferred ideas).
 - `README.md`: how the app runs.
 
 In short: Kulisa shows several browser profiles side by side in one window. Each profile is a separate person
@@ -55,17 +58,22 @@ One page. Suggested sections, adjust if a better order appears:
    tabs and sign-ins, and keeping the connections in your head.
 3. **How it works:** profiles (each its own signed-in person) → panes side by side → an agent you can watch and
    point at things for.
-4. **Features, only what is built** (ROADMAP "Done"): profiles that keep their sign-ins across restarts; panes in
-   a grid you can arrange; see what the agent does; point and tell; the agent points back; workspaces (several
+4. **Features, only what is built** (the guide and `profiles.md`, `tasks.md`, `window.md`): profiles that keep
+   their sign-ins across restarts; panes in a grid you can arrange; see what the agent does; point and tell; the agent points back; workspaces (several
    tasks at once; Linux only so far); choosing the agent (Claude Code, Codex or a terminal; Kulisa installs it);
    a stage per project; macOS, Windows, Linux.
 5. **Coming later** (short, no dates): timeline, a mailbox per profile, saving a run as a test, profile reset.
 6. **FAQ:** Is it free? Which agents work? Does the agent ever sign in for me? (No: a human always signs in.)
    Where is my data? (On your computer.) Which platforms?
-7. **Footer:** © cosmotools, link to the app's repository `github.com/cosmotools/kulisa` (the header links
-   there too).
+7. **Footer:** © cosmotools, Docs, link to the app's repository `github.com/cosmotools/kulisa` (the header links
+   to both too).
 
-Truthfulness: claim only what ROADMAP lists as done. Don't name or compare competitors.
+**Docs** (`/docs`, `src/pages/docs.astro`): the app's `docs/guide.md` and its `docs/images/`, rendered at build
+time, never copied into this repository (CI checks it out into `.kulisa/`; locally `../kulisa/docs` is read). The
+text is the guide's: don't rewrite it on the site; tell the author what reads badly, it is fixed in the app's
+repository. A relative link in the guide fails the build.
+
+Truthfulness: claim only what the guide describes as built. Don't name or compare competitors.
 
 ## Built for content that is coming
 

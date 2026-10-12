@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * 1' # Mondays 06:00 UTC: rebuild to refresh the GitHub star count
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC: rebuild to refresh the GitHub star count and the user guide
 
 permissions:
   contents: read
@@ -21,6 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The user guide (/docs) is read from the app's repository at build time, never copied here.
+      - uses: actions/checkout@v4
+        with:
+          repository: cosmotools/kulisa
+          ref: main
+          path: .kulisa
+          sparse-checkout: docs
       - uses: actions/setup-node@v4
         with:
           node-version: 22

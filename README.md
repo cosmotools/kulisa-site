@@ -1,6 +1,7 @@
 # kulisa-site
 
-The landing page for [Kulisa](https://kulisa.app): one static page built with [Astro](https://astro.build).
+The site of [Kulisa](https://kulisa.app): the landing page and the user guide (`/docs`), static, built with
+[Astro](https://astro.build).
 
 ## Run
 
@@ -35,6 +36,20 @@ Chrome at 1200×630, `node tools/favicon-ico.mjs` for `favicon.ico`, `apple-touc
 
 **GitHub links** (header and footer) go to the app's repository, `links.repo` in `src/content/site.ts`.
 
+## Docs
+
+`/docs` shows the app's user guide, `docs/guide.md` in [`cosmotools/kulisa`](https://github.com/cosmotools/kulisa),
+with its pictures from `docs/images/`. It is written there, with the features it describes; this repository keeps
+no copy. The build reads the first of these that has a `guide.md` (`src/lib/guide-source.ts`):
+
+1. `.kulisa/docs`: in CI, the deploy workflow checks out the app's `docs/` from `main` there (not committed).
+2. `../kulisa/docs`: locally, the app's repository cloned next to this one. `npm run dev` reloads on its changes.
+
+The guide's `#` heading is the page's title; its `##` headings make the table of contents. A relative link in
+the guide (other than its pictures) fails the build with the link named: fix it in the app's repository.
+The live page follows the guide's `main` on every deploy: a push here, the weekly rebuild, or a manual run
+(*Actions → Deploy to GitHub Pages → Run workflow*). Nothing in the app's repository triggers one.
+
 ## Deploy
 
 The site lives at **https://kulisa.app**, served by GitHub Pages from
@@ -45,8 +60,8 @@ Every push to `main` builds the site and deploys it (`.github/workflows/deploy.y
 
 The header shows the app repository's GitHub stars once there are at least `stars.showFrom` (in
 `src/content/site.ts`). The count is fetched once at build time (`src/lib/stars.ts`), so visitors make no
-request to GitHub; if GitHub can't be reached, the link shows without a count. To keep the count fresh, the
-workflow also rebuilds every Monday at 06:00 UTC. GitHub pauses scheduled workflows in a repository with no
+request to GitHub; if GitHub can't be reached, the link shows without a count. To keep the count (and the user guide) fresh,
+the workflow also rebuilds every Monday at 06:00 UTC. GitHub pauses scheduled workflows in a repository with no
 activity for 60 days; a push or a manual run turns them back on.
 
 Settings that make it work (already done, listed for reference):

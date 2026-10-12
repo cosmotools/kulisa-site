@@ -1,0 +1,108 @@
+---
+// The user guide: docs/guide.md of the app's repository (src/content.config.ts), shown as it is.
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+const guide = await getEntry('docs', 'guide');
+if (!guide) throw new Error('The user guide (guide.md) is missing from the docs collection.');
+if (!guide.rendered?.html) {
+  throw new Error('The user guide could not be rendered: see the error from the content loader above.');
+}
+
+// A relative link in the guide works on GitHub but not here: fail the build, naming it, rather than publish a
+// broken link. The guide's pictures are <img>, not links; Astro brings them into the build.
+const relative = [...guide.rendered.html.matchAll(/<a\s[^>]*href="([^"]*)"/g)]
+  .map((m) => m[1])
+  .filter((href) => !/^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href));
+if (relative.length) {
+  throw new Error(
+    `The user guide (${guide.filePath}) has relative links, broken on the site: ${relative.join(', ')}. ` +
+      'Link to https://github.com/cosmotools/kulisa/… instead; fix it in the app’s repository.',
+  );
+}
+
+const { Content, headings } = await render(guide);
+
+const title = headings.find((h) => h.depth === 1)?.text ?? 'Kulisa user guide';
+const contents = headings.filter((h) => h.depth === 2);
+---
+<Base
+  title={`${title} — Kulisa`}
+  description="How to use Kulisa: projects, tasks, profiles and signing in, working with the agent, keyboard shortcuts.">
+  <SiteHeader current="docs" />
+
+  <main id="main" class="docs wrap">
+    <nav class="toc" aria-labelledby="toc-title">
+      <h2 id="toc-title">Contents</h2>
+      <ol>
+        {contents.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+      </ol>
+    </nav>
+    <article class="guide">
+      <Content />
+    </article>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .docs {
+    display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 56px;
+    align-items: start; padding-top: 32px; padding-bottom: 96px;
+  }
+
+  .toc { position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; font-size: 0.92rem; }
+  .toc h2 {
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .toc a { display: block; padding: 4px 0; color: var(--muted); text-decoration: none; line-height: 1.35; }
+  .toc a:hover { color: var(--text); }
+
+  /* The guide's own Markdown: elements come from guide.md, so style them by tag. */
+  .guide { max-width: 46em; min-width: 0; }
+  .guide :global(h1) { font-size: clamp(2rem, 5vw, 2.75rem); letter-spacing: -0.03em; margin-bottom: 28px; }
+  .guide :global(h2) { font-size: 1.6rem; margin: 64px 0 16px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .guide :global(h3) { font-size: 1.2rem; margin: 36px 0 12px; }
+  .guide :global(:is(h2, h3)) { scroll-margin-top: 24px; }
+  .guide :global(p), .guide :global(ul), .guide :global(ol), .guide :global(table) { margin: 0 0 16px; }
+  .guide :global(:is(ul, ol)) { padding-left: 1.4em; }
+  .guide :global(li) { margin: 6px 0; }
+  .guide :global(li::marker) { color: var(--muted); }
+  .guide :global(img) { display: block; margin: 8px 0 32px; border-radius: 10px; box-shadow: var(--shadow-hero); }
+
+  .guide :global(.anchor) {
+    margin-left: 0.35em; color: var(--muted); text-decoration: none; font-weight: 400;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .guide :global(.anchor)::before { content: '#'; }
+  .guide :global(:is(h2, h3):hover .anchor), .guide :global(.anchor:focus-visible) { opacity: 1; }
+  @media (hover: none) { .guide :global(.anchor) { opacity: 0.5; } }
+
+  .guide :global(:not(pre) > code) {
+    padding: 0.1em 0.35em; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .guide :global(table) {
+    width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.95rem;
+    border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  }
+  .guide :global(:is(th, td)) { padding: 10px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-soft); }
+  .guide :global(th) { background: var(--surface-2); font-weight: 600; border-bottom-color: var(--line); }
+  .guide :global(tr:last-child td) { border-bottom: 0; }
+  .guide :global(td:first-child) { width: 42%; font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .docs { grid-template-columns: 1fr; gap: 32px; padding-top: 16px; }
+    .toc {
+      position: static; max-height: none; order: -1;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px;
+    }
+    .toc ol { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0 24px; }
+  }
+</style>

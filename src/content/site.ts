@@ -36,6 +36,8 @@ export const meta = {
 
 export const links = {
   repo: 'https://github.com/cosmotools/kulisa',
+  // The user guide, rendered from the app repository's docs/guide.md (src/pages/docs.astro).
+  docs: '/docs',
   // Later: 'https://github.com/cosmotools/kulisa/releases'
   releases: '',
 };

@@ -2,3 +2,6 @@ node_modules/
 dist/
 .astro/
 .envrc
+
+# The app's user guide, checked out at build time in CI (deploy.yml); locally ../kulisa/docs is read
+.kulisa/
