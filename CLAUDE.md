@@ -40,9 +40,11 @@ accounts — and developers too. Write so a non-programmer understands every lin
   to `main`. Custom domain `kulisa.app` is set in the repo's Pages settings, so the site is served from the root:
   `site: 'https://kulisa.app'`, no `base`. No `CNAME` file needed with Actions deploys. Live since 2026-10-06,
   HTTPS enforced; DNS is at INWX (records in `README.md`).
-- **Download:** no installers are public yet. Show a clear "Coming soon" for macOS, Windows and Linux. No email
-  form, no waitlist. Later the button will link to GitHub Releases of `cosmotools/kulisa`; keep it one place to
-  change.
+- **Download** (the author, 2026-10-13): the buttons lead to the files of the latest GitHub Release of
+  `cosmotools/kulisa`, asked at build time (`src/lib/release.ts`); the app's release starts this site's deploy, so
+  they name the new version at once. Windows (`.exe`) and Linux (`.deb`, `.rpm`); macOS "Coming soon" until it is
+  built. The visitor's own system first. One place to change: `downloads` in `src/content/site.ts`. No email form,
+  no waitlist.
 - **Price:** say it is **free**. Nothing about open source, licenses, plans or paid tiers.
 - **No trackers, no analytics, no cookie banner.** Fonts self-hosted or system fonts, no third-party requests.
 

@@ -47,8 +47,8 @@ no copy. The build reads the first of these that has a `guide.md` (`src/lib/guid
 
 The guide's `#` heading is the page's title; its `##` headings make the table of contents. A relative link in
 the guide (other than its pictures) fails the build with the link named: fix it in the app's repository.
-The live page follows the guide's `main` on every deploy: a push here, the weekly rebuild, or a manual run
-(*Actions → Deploy to GitHub Pages → Run workflow*). Nothing in the app's repository triggers one.
+The live page follows the guide's `main` on every deploy: a push here, a release of the app (below), the weekly
+rebuild, or a manual run (*Actions → Deploy to GitHub Pages → Run workflow*).
 
 ## Deploy
 
@@ -56,7 +56,13 @@ The site lives at **https://kulisa.app**, served by GitHub Pages from
 [`cosmotools/kulisa-site`](https://github.com/cosmotools/kulisa-site).
 
 Every push to `main` builds the site and deploys it (`.github/workflows/deploy.yml`: a `build` job, then a
-`deploy` job). Watch runs in the repository's Actions tab.
+`deploy` job). Watch runs in the repository's Actions tab. So does every release of the app: its release workflow
+runs this one once the release is published (with the app repository's `SITE_DEPLOY_TOKEN`, a token that may only
+run this repository's workflows), so the page's guide is the released one at once.
+
+The download buttons are the files of the app's latest release (`src/lib/release.ts`, which file is which:
+`downloads` in `src/content/site.ts`), asked from GitHub once at build time, as the stars are: they name its
+version, and lead to its files. If GitHub can't be reached, they lead to the releases page.
 
 The header shows the app repository's GitHub stars once there are at least `stars.showFrom` (in
 `src/content/site.ts`). The count is fetched once at build time (`src/lib/stars.ts`), so visitors make no
