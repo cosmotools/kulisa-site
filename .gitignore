@@ -5,3 +5,6 @@ dist/
 
 # The app's user guide, checked out at build time in CI (deploy.yml); locally ../kulisa/docs is read
 .kulisa/
+
+# Screenshots: the app checkout, the stage and its pictures (tools/shots)
+.shots/

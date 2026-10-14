@@ -1,0 +1,144 @@
+---
+// Repositories, drawn: Codex works on the shop's front end, finds the refund is the API's, the human adds that
+// repository to the task (Add Repository), and Codex goes on in both, on one branch (the guide, "Several
+// repositories"). Without JavaScript or with reduced motion: the end of it.
+const status: Record<string, string> = {
+  read: 'Reading shop/src/RefundButton.tsx',
+  need: 'The refund itself is made by the API: that is another repository.',
+  menu: 'Add Repository → api',
+  added: 'api is in the task now, on its branch: refund-button',
+  api: 'Editing api/routes/refunds.ts',
+  shop: 'Editing shop/src/RefundButton.tsx',
+  test: 'Running the API’s tests: 12 passed',
+  done: 'Done in both, on one branch: refund-button',
+};
+---
+<div class="repos" data-step="done" role="img"
+  aria-label="Codex fixes a refund button in the shop’s front end, finds that the refund is made by the API, the API’s repository is added to the task, and Codex edits files in both, on one branch.">
+  <div class="cards">
+    <div class="card shop">
+      <header><svg class="git" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="9" r="2" /><path d="M6 8v8M18 11c0 4-6 3-10 6" /></svg>shop<small>front end</small></header>
+      <ul>
+        <li data-file="read shop"><span class="f">src/RefundButton.tsx</span><span class="mark"></span></li>
+        <li><span class="f">src/Orders.tsx</span></li>
+        <li><span class="f">package.json</span></li>
+      </ul>
+    </div>
+    <div class="card api">
+      <div class="ghost" aria-hidden="true">api · not in this task</div>
+      <header><svg class="git" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="9" r="2" /><path d="M6 8v8M18 11c0 4-6 3-10 6" /></svg>api<small>back end</small></header>
+      <ul>
+        <li data-file="api"><span class="f">routes/refunds.ts</span><span class="mark"></span></li>
+        <li data-file="test"><span class="f">tests/refunds.test.ts</span><span class="mark"></span></li>
+        <li><span class="f">server.ts</span></li>
+      </ul>
+    </div>
+    <div class="agent" aria-hidden="true"><span class="hop"><span class="dot">›_</span>Codex</span></div>
+  </div>
+  <div class="term">
+    <div class="row">
+      <span class="tab"><span class="dot">›_</span>Codex</span>
+      <span class="chips"><span class="chip c-shop">⑂ shop</span><span class="chip c-api">⑂ api</span></span>
+    </div>
+    <p class="line">{Object.entries(status).map(([k, v]) => <span data-say={k}>{v}</span>)}</p>
+    <div class="menu" aria-hidden="true"><span>Add Repository</span><span class="pick">api</span></div>
+  </div>
+</div>
+
+<script>
+  // The scene played while in view, step by step; again after a pause.
+  const steps: [string, number][] = [['read', 1900], ['need', 2000], ['menu', 1300], ['added', 1700], ['api', 1600], ['shop', 1600], ['test', 1600], ['done', 3000]];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const scene of reduce ? [] : document.querySelectorAll<HTMLElement>('.repos')) {
+    let timer = 0, running = false;
+    const play = (i: number) => {
+      if (!running) return;
+      const [step, ms] = steps[i % steps.length]!;
+      scene.dataset.step = step;
+      // A hop each time Codex goes over to the other repository.
+      if (['api', 'shop', 'test'].includes(step)) { scene.classList.remove('hopping'); void scene.offsetWidth; scene.classList.add('hopping'); }
+      timer = window.setTimeout(() => play(i + 1), ms);
+    };
+    new IntersectionObserver(([e]) => {
+      if (e!.isIntersecting && !running) { running = true; play(0); }
+      else if (!e!.isIntersecting && running) { running = false; clearTimeout(timer); scene.dataset.step = 'done'; }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  .repos {
+    --codex: #3b6ff5;
+    height: 100%; box-sizing: border-box;
+    display: grid; grid-template-rows: 1fr auto; gap: 3.5cqi;
+    padding: 3cqi 6cqi 4.5cqi;
+    font-size: max(9px, 2.35cqi);
+    background: radial-gradient(70% 90% at 50% 120%, var(--glow), transparent 70%);
+  }
+  .cards { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 6cqi; align-items: end; padding-top: 3.6em; } /* room for Codex and its hop */
+  .card {
+    position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 1.6cqi;
+    box-shadow: 0 10px 26px -18px rgba(20, 22, 26, 0.35); overflow: hidden;
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .card header { display: flex; align-items: center; gap: 0.5em; padding: 0.6em 0.8em; font-weight: 600; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+  .card header small { font-weight: 400; color: var(--muted); margin-left: auto; }
+  .git { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.8; }
+  .card ul { list-style: none; margin: 0; padding: 0.4em 0; font-family: var(--mono); font-size: 0.92em; }
+  .card li { display: flex; justify-content: space-between; align-items: center; padding: 0.3em 0.8em; color: var(--muted); transition: background 0.3s, color 0.3s; }
+  .mark { width: 0.6em; height: 0.6em; border-radius: 50%; }
+  .ghost {
+    position: absolute; inset: 0; z-index: 1; display: grid; place-items: center;
+    border: 1.5px dashed var(--line); border-radius: inherit; background: var(--bg); color: var(--muted);
+    transition: opacity 0.4s;
+  }
+
+  /* the agent: over the card it works in, hopping between them */
+  .agent { position: absolute; top: 1.3em; left: 25%; transform: translateX(-50%); transition: left 0.7s cubic-bezier(0.5, 0, 0.3, 1); z-index: 2; }
+  .hop {
+    display: inline-flex; align-items: center; gap: 0.4em; padding: 0.25em 0.7em 0.25em 0.3em; border-radius: 999px;
+    background: var(--codex); color: #fff; font-weight: 600; box-shadow: 0 6px 14px -6px var(--codex);
+  }
+  .dot { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; border-radius: 50%; background: #fff; color: var(--codex); font: 700 0.75em var(--mono); }
+  .repos:is([data-step='api'], [data-step='test'], [data-step='done']) .agent { left: 75%; }
+  .repos.hopping .hop { animation: hop 0.7s cubic-bezier(0.5, 0, 0.3, 1); }
+  @keyframes hop { 50% { transform: translateY(-1.1em); } }
+
+  /* the terminal under them: Codex's tab, the task's repositories at the row's end, what is happening */
+  .term { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 1.6cqi; }
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 0.45em 0.5em; border-bottom: 1px solid var(--line); background: var(--surface-2); border-radius: 1.6cqi 1.6cqi 0 0; }
+  .tab { display: inline-flex; align-items: center; gap: 0.45em; padding: 0.2em 0.7em 0.2em 0.3em; border-radius: 0.5em; background: var(--surface); }
+  .tab .dot { background: var(--codex); color: #fff; }
+  .chips { display: inline-flex; gap: 0.4em; }
+  .chip { padding: 0.15em 0.65em; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); transition: background 0.4s, border-color 0.4s, color 0.4s, opacity 0.4s, transform 0.4s; }
+  .line { position: relative; margin: 0; height: 2.6em; font-family: var(--mono); font-size: 0.92em; }
+  .line span { position: absolute; inset: 0 0.8em; line-height: 2.6em; opacity: 0; transition: opacity 0.25s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .menu {
+    position: absolute; left: 1.2em; bottom: calc(100% - 0.6em); display: flex; gap: 0.3em; padding: 0.3em; z-index: 3;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 0.6em; box-shadow: 0 12px 24px -12px rgba(20, 22, 26, 0.45);
+    opacity: 0; transform: translateY(0.4em); transition: opacity 0.2s, transform 0.2s; pointer-events: none;
+  }
+  .menu span { padding: 0.25em 0.6em; border-radius: 0.4em; }
+  .menu .pick { background: var(--accent); color: var(--surface); }
+
+  /* step by step */
+  .repos[data-step='read'] [data-say='read'], .repos[data-step='need'] [data-say='need'], .repos[data-step='menu'] [data-say='menu'],
+  .repos[data-step='added'] [data-say='added'], .repos[data-step='api'] [data-say='api'], .repos[data-step='shop'] [data-say='shop'],
+  .repos[data-step='test'] [data-say='test'], .repos[data-step='done'] [data-say='done'] { opacity: 1; }
+  .repos[data-step='menu'] .menu { opacity: 1; transform: none; }
+  /* api not in the task until it is added */
+  .repos:is([data-step='read'], [data-step='need'], [data-step='menu']) .c-api { opacity: 0; transform: translateX(1em); }
+  .repos:not(:is([data-step='read'], [data-step='need'], [data-step='menu'])) .ghost { opacity: 0; pointer-events: none; }
+  .repos[data-step='added'] .c-api { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  /* the file being worked on, and what has been edited */
+  .repos[data-step='read'] [data-file~='read'], .repos[data-step='need'] [data-file~='read'],
+  .repos[data-step='api'] [data-file~='api'], .repos[data-step='shop'] [data-file~='shop'], .repos[data-step='test'] [data-file~='test'] {
+    background: color-mix(in srgb, var(--codex) 12%, transparent); color: var(--text);
+  }
+  .repos:is([data-step='shop'], [data-step='test'], [data-step='done']) [data-file~='api'] .mark,
+  .repos:is([data-step='test'], [data-step='done']) [data-file~='shop'] .mark,
+  .repos[data-step='done'] [data-file~='test'] .mark { background: #2f9e5b; }
+  .repos:is([data-step='shop'], [data-step='test'], [data-step='done']) [data-file~='api'],
+  .repos:is([data-step='test'], [data-step='done']) [data-file~='shop'],
+  .repos[data-step='done'] [data-file~='test'] { color: var(--text); }
+</style>

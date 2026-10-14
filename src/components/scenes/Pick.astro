@@ -1,0 +1,138 @@
+---
+// Point and tell, drawn inside a small Kulisa: your pointer (a person's: no Claude beside it) clicks Pick at the end of
+// a pane's address bar, then a thing on the page; a reference to it lands in the agent's input, you write the rest;
+// then the same in another pane, for one message (the guide, "Working with the agent"). Without JavaScript or with
+// reduced motion: the end of it.
+import Mark from '../Mark.astro';
+import { claude } from './claude';
+const t1 = 'was ordered here, but', t2 = 'doesn’t show it';
+---
+<div class="pickscene" data-step="done" role="img"
+  aria-label="In Kulisa, you click Pick, then the Stoneware mug in the buyer’s page: a reference to it lands in the agent’s input; you write “was ordered here, but”, pick the seller’s orders list, and write “doesn’t show it”.">
+  <div class="win">
+    <div class="titlebar"><Mark size={14} /><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="panes">
+      <div class="pane">
+        <div class="ph"><span>🦊</span><b>anna</b></div>
+        <div class="addr"><span>localhost/shop</span><span class="pickbtn a-pickbtn"><svg viewBox="0 0 24 24"><path d="M14 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M12 11l9 4-4 1.3L15.7 20z" /></svg></span></div>
+        <div class="pb">
+          <div class="cards">
+            <div class="card"><span class="img i1"></span><span class="t a-title">Stoneware mug</span><span class="price">$24.00</span></div>
+            <div class="card"><span class="img i2"></span><span class="t">Linen towel</span><span class="price">$18.00</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pane">
+        <div class="ph"><span>🐸</span><b>ben</b></div>
+        <div class="addr"><span>localhost/seller</span><span class="pickbtn b-pickbtn"><svg viewBox="0 0 24 24"><path d="M14 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5M12 11l9 4-4 1.3L15.7 20z" /></svg></span></div>
+        <div class="pb">
+          <div class="list b-list">
+            <b class="lt">Orders to ship</b>
+            <div class="row"><span>#1043</span><span>Iris</span><span class="tag">new</span></div>
+            <div class="row"><span>#1042</span><span>Omar</span><span class="tag ok">shipped</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="island">
+      <div class="tabs"><span class="tab"><svg class="mini" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true">{claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}</svg>Claude Code</span></div>
+      <p class="input"><span class="prompt">❯</span>
+        <span class="ref r1">🦊 Stoneware mug</span>
+        <span class="typed y1" style={`--n: ${t1.length}`}>{t1}</span>
+        <span class="ref r2">🐸 Orders to ship</span>
+        <span class="typed y2" style={`--n: ${t2.length}`}>{t2}</span><span class="caret"></span>
+      </p>
+    </div>
+  </div>
+  <svg class="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" /></svg>
+</div>
+
+<script>
+  // The scene played while in view, step by step; the pointer goes to what each step clicks.
+  const steps: [string, number, string?][] = [
+    ['idle', 900], ['pickA', 900, '.a-pickbtn'], ['hoverA', 900, '.a-title'], ['clickA', 900, '.a-title'], ['typeA', 1700, '.a-title'],
+    ['pickB', 900, '.b-pickbtn'], ['hoverB', 900, '.b-list'], ['clickB', 900, '.b-list'], ['typeB', 1400, '.b-list'], ['done', 2800],
+  ];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const scene of reduce ? [] : document.querySelectorAll<HTMLElement>('.pickscene')) {
+    let timer = 0, running = false;
+    const cursor = scene.querySelector<SVGElement>('.cursor')!;
+    const play = (i: number) => {
+      if (!running) return;
+      const [step, ms, selector] = steps[i % steps.length]!;
+      scene.dataset.step = step;
+      const target = selector ? scene.querySelector<HTMLElement>(selector) : null;
+      if (target) {
+        const t = target.getBoundingClientRect(), b = scene.getBoundingClientRect();
+        cursor.style.left = `${t.left - b.left + Math.min(t.width * 0.5, 40)}px`; cursor.style.top = `${t.top - b.top + t.height * 0.55}px`;
+      } else { cursor.style.left = '92%'; cursor.style.top = '88%'; }
+      timer = window.setTimeout(() => play(i + 1), ms);
+    };
+    new IntersectionObserver(([e]) => {
+      if (e!.isIntersecting && !running) { running = true; play(0); }
+      else if (!e!.isIntersecting && running) { running = false; clearTimeout(timer); scene.dataset.step = 'done'; }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  .pickscene {
+    --claude: #d97757; --mark: #2f6fd6; --brand: #b4532a;
+    position: relative; height: 100%; box-sizing: border-box; padding: 3.5cqi 5cqi;
+    font-size: max(8px, 2.05cqi);
+    background: radial-gradient(70% 90% at 50% 120%, var(--glow), transparent 70%);
+  }
+  .win {
+    height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto 1fr auto; gap: 0.6em; padding: 0 0.6em 0.6em;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 0.9em; box-shadow: 0 24px 50px -30px rgba(20, 22, 26, 0.45);
+  }
+  .titlebar { display: flex; align-items: center; justify-content: space-between; height: 2em; }
+  .dots { display: flex; gap: 0.4em; } .dots i { width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--line); }
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; min-height: 0; }
+  .pane { display: grid; grid-template-rows: auto auto 1fr; min-height: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 0.55em; overflow: hidden; }
+  .ph { display: flex; align-items: center; gap: 0.4em; padding: 0.35em 0.6em; }
+  .addr { display: flex; align-items: center; justify-content: space-between; margin: 0 0.5em 0.3em; padding: 0.2em 0.3em 0.2em 0.7em; border-radius: 1em; background: var(--surface-2); color: var(--muted); font-size: 0.85em; }
+  .pickbtn { display: grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 0.4em; transition: background 0.2s, color 0.2s; }
+  .pickbtn svg { width: 1.15em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .pb { padding: 0.5em 0.7em; min-height: 0; border-top: 1px solid var(--line-soft); }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; }
+  .card { display: flex; flex-direction: column; gap: 0.3em; padding: 0.5em; border: 1px solid var(--line); border-radius: 0.5em; }
+  .img { height: 2.4em; border-radius: 0.35em; } .i1 { background: linear-gradient(135deg, #8fb0e0, #5b84c4); } .i2 { background: linear-gradient(135deg, #e2bd8a, #c49559); }
+  .t { align-self: flex-start; font-weight: 600; font-size: 0.95em; border-radius: 0.2em; outline: 0.15em solid transparent; outline-offset: 0.12em; transition: outline-color 0.2s, background 0.2s; }
+  .price { color: var(--muted); font-size: 0.85em; }
+  .list { display: flex; flex-direction: column; gap: 0.15em; padding: 0.3em; border-radius: 0.35em; outline: 0.15em solid transparent; transition: outline-color 0.2s, background 0.2s; font-size: 0.9em; }
+  .lt { margin-bottom: 0.3em; }
+  .row { display: grid; grid-template-columns: 3.4em 1fr auto; gap: 0.4em; padding: 0.35em 0.2em; border-bottom: 1px solid var(--line-soft); }
+  .tag { padding: 0.05em 0.5em; border-radius: 1em; background: #fbe3d9; color: #a2462b; font-size: 0.85em; } .tag.ok { background: #dcefe2; color: #2c7a4b; }
+  .island { background: var(--surface); border: 1px solid var(--line); border-radius: 0.55em; }
+  .tabs { padding: 0.3em 0.4em; background: var(--surface-2); border-bottom: 1px solid var(--line); border-radius: 0.55em 0.55em 0 0; }
+  .tab { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.2em 0.7em 0.2em 0.4em; border-radius: 0.4em; background: var(--surface); }
+  .mini { width: 1.5em; fill: var(--claude); }
+  .input { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45em; margin: 0; min-height: 2.6em; padding: 0.4em 0.8em; box-sizing: border-box; font-family: var(--mono); font-size: 0.9em; }
+  .prompt { color: var(--muted); }
+  .ref { padding: 0.1em 0.55em; border-radius: 0.4em; background: color-mix(in srgb, var(--mark) 14%, transparent); color: var(--mark); white-space: nowrap; font-family: var(--sans); font-weight: 600; font-size: 0.95em; }
+  .typed { display: inline-block; overflow: hidden; white-space: nowrap; width: calc(var(--n) * 1ch); vertical-align: bottom; }
+  .caret { width: 0.55em; height: 1.1em; border: 1px solid var(--text); }
+  .cursor { position: absolute; left: 92%; top: 88%; width: 1.5em; z-index: 3; fill: #17181b; stroke: #fff; stroke-width: 1.5; pointer-events: none;
+    transition: left 0.75s cubic-bezier(0.5, 0, 0.3, 1), top 0.75s cubic-bezier(0.5, 0, 0.3, 1); }
+
+  /* Pick pressed: its button lit; hovering: the element dashed; picked: outlined */
+  .pickscene:is([data-step='pickA'], [data-step='hoverA']) .a-pickbtn, .pickscene:is([data-step='pickB'], [data-step='hoverB']) .b-pickbtn { background: var(--mark); color: #fff; }
+  .pickscene[data-step='hoverA'] .a-title, .pickscene[data-step='hoverB'] .b-list { outline: 0.15em dashed var(--mark); background: color-mix(in srgb, var(--mark) 10%, transparent); }
+  .pickscene:is([data-step='clickA'], [data-step='typeA']) .a-title, .pickscene:is([data-step='clickB'], [data-step='typeB']) .b-list { outline-color: var(--mark); background: color-mix(in srgb, var(--mark) 10%, transparent); }
+  /* the message: the references land, the words are typed after them */
+  .pickscene:is([data-step='idle'], [data-step='pickA'], [data-step='hoverA']) :is(.r1, .y1, .r2, .y2),
+  .pickscene:is([data-step='clickA'], [data-step='typeA'], [data-step='pickB'], [data-step='hoverB']) :is(.r2, .y2),
+  .pickscene[data-step='clickB'] .y2 { display: none; }
+  .pickscene[data-step='clickA'] .y1 { width: 0; }
+  .pickscene[data-step='clickA'] .r1, .pickscene[data-step='clickB'] .r2 { animation: land 0.45s cubic-bezier(0.3, 0, 0.3, 1.3); }
+  @keyframes land { from { transform: translateY(-1.6em) scale(0.6); opacity: 0; } }
+  .pickscene[data-step='typeA'] .y1 { animation: type 1.4s steps(var(--n)) both; }
+  .pickscene[data-step='typeB'] .y2 { animation: type 1.1s steps(var(--n)) both; }
+  @keyframes type { from { width: 0; } }
+
+  @container (max-width: 560px) {
+    .pickscene { padding: 3cqi; font-size: 7px; }
+    .cards { grid-template-columns: 1fr; } .card + .card { display: none; }
+  }
+</style>

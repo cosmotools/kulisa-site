@@ -1,0 +1,181 @@
+---
+// Hand-over, drawn inside a small Kulisa: Claude Code (its own pixel mascot) works in the task, clicking in the
+// profiles, until it runs out of tokens; you hand the work over from its tab; it goes to sleep in its tab and Codex
+// (a little terminal with legs) jumps in and finishes it (the guide, "Agents and their accounts"). Without
+// JavaScript or with reduced motion: the end of it.
+import Mark from '../Mark.astro';
+import { claude } from './claude';
+const panes = [{ face: '🦊', who: 'buyer' }, { face: '🐸', who: 'seller' }, { face: '🐼', who: 'admin' }];
+---
+<div class="handover" data-step="done" role="img"
+  aria-label="In Kulisa, Claude Code works in a task, clicking in the profiles, until it runs out of tokens and falls asleep in its tab; the work is handed over to Codex, who jumps in, carries on and finishes it.">
+  <div class="win">
+    <div class="titlebar"><Mark size={14} /><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="panes">
+      {panes.map((p, i) => (
+        <div class="pane" style={`--i: ${i}`}>
+          <div class="ph"><span class="face">{p.face}</span><span class="who">{p.who}</span><span class="ok">✓</span></div>
+          <div class="pb"><i></i><i></i><i class="short"></i><b class="blk"></b><span class="ring"></span></div>
+        </div>
+      ))}
+    </div>
+    <div class="island">
+      <div class="tabs">
+        <span class="tab t-claude">
+          <svg class="mini" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true">{claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}</svg>
+          Claude Code<span class="bell">🔔</span><span class="zz">z z</span>
+        </span>
+        <span class="tab t-codex"><span class="minicodex">›_</span>Codex</span>
+        <span class="menu"><span>Hand over</span><b>Codex</b></span>
+        <svg class="pointer" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" /></svg>
+      </div>
+      <div class="term">
+        <div class="actor a-claude">
+          <span class="say s-tired">I’m out of tokens…</span>
+          <svg class="clawd" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true">
+            {claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}
+            <rect class="eye" x="3" y="1" width="1" height="1" /><rect class="eye" x="8" y="1" width="1" height="1" />
+          </svg>
+        </div>
+        <div class="actor a-codex">
+          <span class="say s-got">I’ve got it!</span>
+          <span class="codex"><span class="scr">›<i>_</i></span><span class="legs"><i></i><i></i></span></span>
+        </div>
+        <div class="lines"><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // The scene played while in view, step by step; again after a pause.
+  const steps: [string, number][] = [['work', 2800], ['tired', 2000], ['hand', 1300], ['swap', 1600], ['go', 2800], ['done', 3000]];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const scene of reduce ? [] : document.querySelectorAll<HTMLElement>('.handover')) {
+    let timer = 0, running = false;
+    const play = (i: number) => {
+      if (!running) return;
+      const [step, ms] = steps[i % steps.length]!;
+      scene.dataset.step = step;
+      timer = window.setTimeout(() => play(i + 1), ms);
+    };
+    new IntersectionObserver(([e]) => {
+      if (e!.isIntersecting && !running) { running = true; play(0); }
+      else if (!e!.isIntersecting && running) { running = false; clearTimeout(timer); scene.dataset.step = 'done'; }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  .handover {
+    --claude: #d97757; --codex: #3b6ff5; --ok: #2f9e5b;
+    height: 100%; box-sizing: border-box; padding: 3.5cqi 6cqi;
+    font-size: max(8px, 1.45cqi);
+    background: radial-gradient(70% 90% at 50% 120%, var(--glow), transparent 70%);
+  }
+  .win {
+    height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto 1fr 1.05fr; gap: 0.7em; padding: 0 0.7em 0.7em;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 1em;
+    box-shadow: 0 24px 50px -30px rgba(20, 22, 26, 0.45);
+  }
+  .titlebar { display: flex; align-items: center; justify-content: space-between; height: 2.2em; }
+  .dots { display: flex; gap: 0.45em; } .dots i { width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--line); }
+
+  /* the profiles: three panes, where the agent clicks */
+  .panes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7em; min-height: 0; }
+  .pane { display: grid; grid-template-rows: auto 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 0.6em; overflow: hidden; }
+  .ph { display: flex; align-items: center; gap: 0.45em; padding: 0.45em 0.6em; border-bottom: 1px solid var(--line-soft); }
+  .who { color: var(--muted); }
+  .ok { margin-left: auto; color: var(--ok); font-weight: 700; opacity: 0; transform: scale(0.5); transition: opacity 0.3s, transform 0.3s; transition-delay: calc(var(--i) * 0.35s); }
+  .pb { position: relative; padding: 0.8em; display: flex; flex-direction: column; gap: 0.55em; }
+  .pb i { height: 0.5em; border-radius: 0.3em; background: var(--line-soft); } .pb i.short { width: 55%; }
+  .blk { height: 1.6em; width: 45%; border-radius: 0.4em; background: color-mix(in srgb, var(--line) 70%, transparent); }
+  .ring { position: absolute; left: 30%; top: 70%; width: 1.8em; height: 1.8em; margin: -0.9em; border-radius: 50%; border: 0.2em solid var(--agent, var(--claude)); opacity: 0; }
+
+  /* the terminal island: the agents' tabs, and the stage where the agent at work stands */
+  .island { display: grid; grid-template-rows: auto 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 0.6em; min-height: 0; }
+  .tabs { position: relative; display: flex; align-items: center; gap: 0.4em; padding: 0.35em 0.45em; background: var(--surface-2); border-bottom: 1px solid var(--line); border-radius: 0.6em 0.6em 0 0; }
+  .tab { display: inline-flex; align-items: center; gap: 0.45em; padding: 0.25em 0.75em 0.25em 0.45em; border-radius: 0.45em; color: var(--muted); transition: background 0.3s, color 0.3s, opacity 0.4s, transform 0.4s; }
+  .mini { width: 1.5em; height: auto; fill: var(--claude); transition: opacity 0.3s; }
+  .minicodex { display: inline-grid; place-items: center; width: 1.6em; height: 1.25em; border-radius: 0.3em; background: var(--codex); color: #fff; font: 700 0.75em var(--mono); }
+  .bell, .zz { font-size: 0.85em; }
+  .zz { color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
+  .menu {
+    position: absolute; left: 0.6em; bottom: calc(100% + 0.2em); display: inline-flex; gap: 0.3em; padding: 0.3em; z-index: 3;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 0.5em; box-shadow: 0 12px 24px -12px rgba(20, 22, 26, 0.45);
+    opacity: 0; transform: translateY(0.4em); transition: opacity 0.2s, transform 0.2s;
+  }
+  .menu span, .menu b { padding: 0.2em 0.6em; border-radius: 0.35em; }
+  .menu b { background: var(--codex); color: #fff; }
+  .pointer { position: absolute; left: 1.6em; top: 1.1em; width: 1.4em; fill: var(--text); stroke: var(--surface); stroke-width: 1.6; opacity: 0; transition: opacity 0.2s, transform 0.3s; z-index: 4; }
+
+  .term { position: relative; min-height: 0; overflow: hidden; }
+  .actor { position: absolute; left: 7%; bottom: 14%; display: flex; flex-direction: column; align-items: center; transition: transform 0.6s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.5s; }
+  .clawd { width: 8.4em; height: auto; fill: var(--claude); overflow: visible; }
+  .clawd .eye { fill: #17181b; transform-box: fill-box; transform-origin: center; transition: transform 0.3s; }
+  .codex { display: flex; flex-direction: column; align-items: center; }
+  .scr {
+    display: grid; place-items: center; width: 2.9em; height: 2.2em; border-radius: 0.5em; background: var(--codex); color: #fff;
+    font: 700 2.3em/1 var(--mono); box-shadow: inset 0 -0.2em 0 rgba(0, 0, 0, 0.18);
+  }
+  .scr i { font-style: normal; animation: cursor 1s steps(1) infinite; }
+  @keyframes cursor { 50% { opacity: 0; } }
+  .legs { display: flex; gap: 2em; } .legs i { width: 0.7em; height: 1em; background: var(--codex); border-radius: 0 0 0.2em 0.2em; }
+  .handover[data-step='go'] .legs i { animation: step 0.5s steps(1) infinite; } .handover[data-step='go'] .legs i + i { animation-delay: -0.25s; }
+  @keyframes step { 50% { height: 0.6em; } }
+  .say {
+    position: absolute; bottom: calc(100% + 0.5em); left: 50%; white-space: nowrap; padding: 0.35em 0.8em; border-radius: 1em;
+    background: var(--surface); border: 1px solid var(--line); box-shadow: 0 8px 18px -12px rgba(20, 22, 26, 0.4);
+    opacity: 0; transform: translate(-20%, 0.4em); transition: opacity 0.25s, transform 0.25s;
+  }
+  .lines { position: absolute; left: 30%; right: 6%; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 0.7em; }
+  .lines i { display: block; height: 0.5em; border-radius: 0.3em; background: var(--line-soft); transform-origin: left; transform: scaleX(0.15); }
+  .lines i:nth-child(2) { width: 80%; } .lines i:nth-child(3) { width: 60%; } .lines i:nth-child(4) { width: 72%; }
+
+  /* work: the agent at work bobs, its lines run, its clicks land in the panes (in its color) */
+  .handover[data-step='work'] .a-claude, .handover[data-step='go'] .a-codex { animation: bob 0.5s ease-in-out infinite; }
+  @keyframes bob { 50% { translate: 0 -0.3em; } }
+  .handover:is([data-step='work'], [data-step='go']) .lines i { animation: run 1.6s ease-in-out infinite; }
+  .handover:is([data-step='work'], [data-step='go']) .lines i:nth-child(2) { animation-delay: -0.4s; }
+  .handover:is([data-step='work'], [data-step='go']) .lines i:nth-child(3) { animation-delay: -0.8s; }
+  .handover:is([data-step='work'], [data-step='go']) .lines i:nth-child(4) { animation-delay: -1.2s; }
+  @keyframes run { 0% { transform: scaleX(0.1); } 60%, 100% { transform: scaleX(1); } }
+  .handover:is([data-step='work'], [data-step='tired'], [data-step='hand']) .lines i { background: color-mix(in srgb, var(--claude) 40%, var(--line-soft)); }
+  .handover:is([data-step='go'], [data-step='done']) .lines i { background: color-mix(in srgb, var(--codex) 40%, var(--line-soft)); }
+  .handover[data-step='done'] .lines i { transform: scaleX(1); }
+  .handover[data-step='work'] .ring { animation: click 2.4s ease-out infinite; animation-delay: calc(var(--i) * 0.8s); }
+  .handover[data-step='go'] .ring { --agent: var(--codex); animation: click 2.4s ease-out infinite; animation-delay: calc(var(--i) * 0.8s); }
+  @keyframes click { 0% { opacity: 0; transform: scale(0.4); } 8% { opacity: 1; } 30% { opacity: 0; transform: scale(1.2); } 100% { opacity: 0; } }
+  .handover[data-step='done'] .ok { opacity: 1; transform: none; }
+
+  /* Claude: its tab in front while it works; out of tokens: eyes shut, the bell; asleep in its tab after */
+  .handover:is([data-step='work'], [data-step='tired'], [data-step='hand']) .t-claude { background: var(--surface); color: var(--text); }
+  .handover:not(:is([data-step='tired'], [data-step='hand'])) .bell { display: none; }
+  .handover:not(:is([data-step='swap'], [data-step='go'], [data-step='done'])) .zz { display: none; }
+  .handover:is([data-step='swap'], [data-step='go'], [data-step='done']) .t-claude .mini { opacity: 0.55; }
+  .handover:is([data-step='tired'], [data-step='hand']) .clawd .eye { transform: scaleY(0.3); }
+  .handover:is([data-step='tired'], [data-step='hand']) .a-claude { transform: translateY(0.3em) scaleY(0.94); }
+  .handover:is([data-step='tired'], [data-step='hand']) .s-tired { opacity: 1; transform: translate(-20%, 0); }
+  .handover:is([data-step='swap'], [data-step='go'], [data-step='done']) .a-claude { opacity: 0; transform: translate(-1em, -5em) scale(0.25); }
+  /* you hand it over: the pointer on Claude's tab, the menu */
+  .handover[data-step='hand'] .pointer { opacity: 1; transform: translate(0.2em, 0.15em); }
+  .handover[data-step='hand'] .menu { opacity: 1; transform: none; }
+  /* Codex: its tab comes, it jumps in, works, hops for joy */
+  .handover:is([data-step='work'], [data-step='tired'], [data-step='hand']) .t-codex { opacity: 0; transform: translateX(-0.8em); }
+  .handover:is([data-step='swap'], [data-step='go'], [data-step='done']) .t-codex { background: var(--surface); color: var(--text); }
+  .handover:is([data-step='work'], [data-step='tired'], [data-step='hand']) .a-codex { opacity: 0; transform: translate(4em, -5em) scale(0.25); }
+  .handover[data-step='swap'] .a-codex { animation: jumpin 0.8s cubic-bezier(0.3, 0, 0.3, 1); }
+  @keyframes jumpin { 0% { transform: translate(4em, -5em) scale(0.25); opacity: 0; } 60% { transform: translate(0, -1.2em) scale(1); opacity: 1; } 100% { transform: none; } }
+  .handover[data-step='swap'] .s-got { opacity: 1; transform: translate(-20%, 0); }
+  .handover[data-step='done'] .a-codex { animation: joy 0.6s ease-out 2; }
+  @keyframes joy { 40% { translate: 0 -1em; } }
+
+  /* a phone: the terminal is short, the friends smaller */
+  @container (max-width: 560px) {
+    .handover { padding: 3cqi 3cqi; }
+    .clawd { width: 5.6em; }
+    .scr { font-size: 1.5em; }
+    .legs { gap: 1.3em; } .legs i { width: 0.5em; height: 0.7em; }
+    .actor { bottom: 10%; }
+  }
+</style>

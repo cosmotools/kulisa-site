@@ -1,9 +1,18 @@
 ---
-// A media slot: a video (16:9), an image (at its own proportions), or until either exists a calm 16:9 placeholder.
+// A media slot: a video (16:9), an image (at its own proportions), a scene drawn in HTML (16:9), or until one exists a
+// calm 16:9 placeholder.
 import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import type { Media, Icon as IconName } from '../content/site';
 import Icon from './Icon.astro';
+import Dictation from './scenes/Dictation.astro';
+import Repos from './scenes/Repos.astro';
+import Handover from './scenes/Handover.astro';
+import Watch from './scenes/Watch.astro';
+import Pick from './scenes/Pick.astro';
+import Highlight from './scenes/Highlight.astro';
+
+const scenes = { dictation: Dictation, repos: Repos, handover: Handover, watch: Watch, pick: Pick, highlight: Highlight };
 
 interface Props { media: Media; icon?: IconName; eager?: boolean; sizes?: string }
 const { media, icon, eager = false, sizes = '(min-width: 1100px) 560px, 100vw' } = Astro.props;
@@ -18,9 +27,10 @@ const asset = (file?: string) => {
 
 const image = asset(media.image);
 const posterAsset = asset(media.poster);
+const Scene = media.scene && scenes[media.scene];
 const poster = posterAsset ? (await getImage({ src: posterAsset, width: 1280, format: 'webp' })).src : undefined;
 ---
-<div class="media" data-kind={media.video ? 'video' : image ? 'image' : 'empty'}>
+<div class="media" data-kind={media.video ? 'video' : image ? 'image' : Scene ? 'scene' : 'empty'}>
   {media.video ? (
     <video muted loop playsinline preload="none" poster={poster} aria-label={media.alt} data-lazy-video>
       <source src={`/media/${media.video}`} type={media.video.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
@@ -28,6 +38,8 @@ const poster = posterAsset ? (await getImage({ src: posterAsset, width: 1280, fo
   ) : image ? (
     <Image src={image} alt={media.alt ?? ''} widths={[640, 960, 1280, 1920]} sizes={sizes}
       loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
+  ) : Scene ? (
+    <Scene />
   ) : (
     <slot>
       <div class="media-empty" aria-hidden="true">
@@ -45,6 +57,13 @@ const poster = posterAsset ? (await getImage({ src: posterAsset, width: 1280, fo
     border: 1px solid var(--line);
   }
   .media:not([data-kind='image']) { aspect-ratio: 16 / 9; }
+  /* a scene sizes itself by the slot's width (cqi), and is always light, as the screenshots are (the window as it
+     is pictured), whatever the page's theme */
+  .media[data-kind='scene'] {
+    container-type: inline-size; color-scheme: light; color: var(--text);
+    --bg: #fbfaf8; --surface: #ffffff; --surface-2: #f2f1ee; --text: #17181a; --muted: #5d6168;
+    --line: #e4e2dd; --line-soft: #ecebe7; --accent: #2f6fd6; --glow: rgba(83, 155, 245, 0.14);
+  }
   .media video { display: block; width: 100%; height: 100%; object-fit: cover; }
   .media img { display: block; width: 100%; height: auto; }
   .media-empty {

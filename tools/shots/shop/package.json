@@ -1,0 +1,6 @@
+{
+  "name": "hearth",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "node server.ts 4480" }
+}

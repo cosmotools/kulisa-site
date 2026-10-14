@@ -1,0 +1,133 @@
+---
+// The agent points back, drawn inside a small Kulisa: you ask where something is; the agent's pointer (Claude beside
+// it) outlines it in the seller's and the admin's pages, a label over each pane; it stays until you click there (the
+// guide, "Working with the agent"). Without JavaScript or with reduced motion: both outlined.
+import Mark from '../Mark.astro';
+import { claude } from './claude';
+const ask = 'where is Anna’s order?';
+const panes = [
+  { face: '🐸', name: 'ben', title: 'Orders to ship', cls: 'p-ben', rows: [['#1044', 'Anna', 'new'], ['#1043', 'Iris', 'new'], ['#1042', 'Omar', 'shipped']] },
+  { face: '🐼', name: 'cleo', title: 'All orders', cls: 'p-cleo', rows: [['#1044', 'Anna', 'new'], ['#1043', 'Iris', 'new'], ['#1042', 'Omar', 'shipped'], ['#1041', 'Maya', 'shipped']] },
+];
+---
+<div class="pointback" data-step="answer" role="img"
+  aria-label="In Kulisa, you ask the agent where Anna’s order is; its pointer outlines the order in the seller’s and the admin’s pages, with a label over each pane; the outline stays until you click in that page.">
+  <div class="win">
+    <div class="titlebar"><Mark size={14} /><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="panes">
+      {panes.map((p) => (
+        <div class={`pane ${p.cls}`}>
+          <div class="ph"><span>{p.face}</span><b>{p.name}</b><span class="cap">↖ agent: points at: #1044</span></div>
+          <div class="pb">
+            <b class="lt">{p.title}</b>
+            {p.rows.map(([n, who, state], i) => (
+              <div class:list={['row', { hit: i === 0 }]}><span>{n}</span><span>{who}</span><span class:list={['tag', { ok: state === 'shipped' }]}>{state}</span></div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="island">
+      <div class="tabs"><span class="tab"><svg class="mini" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true">{claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}</svg>Claude Code</span></div>
+      <div class="talk">
+        <p class="you"><span class="prompt">❯</span><span class="typed" style={`--n: ${ask.length}`}>{ask}</span><span class="caret"></span></p>
+        <p class="reply"><span class="dot">●</span>Here, in both pages: outlined for Ben and for Cleo.</p>
+      </div>
+    </div>
+  </div>
+  <span class="agentptr" aria-hidden="true">
+    <svg class="pointer" viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L10 19z" /></svg>
+    <svg class="who" viewBox="0 0 12 7" shape-rendering="crispEdges">{claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}</svg>
+  </span>
+  <svg class="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.5L10 19z" /></svg>
+</div>
+
+<script>
+  // The scene played while in view, step by step; the agent's pointer and yours go where each step acts.
+  const steps: [string, number, string?, string?][] = [
+    ['ask', 1700], ['sent', 900], ['point1', 1300, '.p-ben .hit'], ['point2', 1300, '.p-cleo .hit'], ['answer', 2000],
+    ['clear', 1800, undefined, '.p-ben .row:nth-of-type(3)'],
+  ];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const scene of reduce ? [] : document.querySelectorAll<HTMLElement>('.pointback')) {
+    let timer = 0, running = false;
+    const agent = scene.querySelector<HTMLElement>('.agentptr')!, cursor = scene.querySelector<SVGElement>('.cursor')!;
+    const at = (el: HTMLElement | SVGElement, selector: string) => {
+      const t = scene.querySelector(selector)!.getBoundingClientRect(), b = scene.getBoundingClientRect();
+      el.style.left = `${t.left - b.left + t.width * 0.6}px`; el.style.top = `${t.top - b.top + t.height * 0.6}px`;
+    };
+    const play = (i: number) => {
+      if (!running) return;
+      const [step, ms, agentAt, youAt] = steps[i % steps.length]!;
+      scene.dataset.step = step;
+      if (agentAt) at(agent, agentAt);
+      if (youAt) at(cursor, youAt); else { cursor.style.left = '93%'; cursor.style.top = '92%'; }
+      timer = window.setTimeout(() => play(i + 1), ms);
+    };
+    new IntersectionObserver(([e]) => {
+      if (e!.isIntersecting && !running) { running = true; play(0); }
+      else if (!e!.isIntersecting && running) { running = false; clearTimeout(timer); scene.dataset.step = 'answer'; }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  .pointback {
+    --claude: #d97757; --mark: #2f6fd6;
+    position: relative; height: 100%; box-sizing: border-box; padding: 3.5cqi 5cqi;
+    font-size: max(8px, 2.05cqi);
+    background: radial-gradient(70% 90% at 50% 120%, var(--glow), transparent 70%);
+  }
+  .win {
+    height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto 1fr auto; gap: 0.6em; padding: 0 0.6em 0.6em;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 0.9em; box-shadow: 0 24px 50px -30px rgba(20, 22, 26, 0.45);
+  }
+  .titlebar { display: flex; align-items: center; justify-content: space-between; height: 2em; }
+  .dots { display: flex; gap: 0.4em; } .dots i { width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--line); }
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; min-height: 0; }
+  .pane { display: grid; grid-template-rows: auto 1fr; min-height: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 0.55em; overflow: hidden; }
+  .ph { display: flex; align-items: center; gap: 0.4em; padding: 0.4em 0.6em; border-bottom: 1px solid var(--line-soft); white-space: nowrap; overflow: hidden; }
+  .cap { color: var(--mark); overflow: hidden; text-overflow: ellipsis; opacity: 0; transition: opacity 0.25s; }
+  .pb { display: flex; flex-direction: column; padding: 0.5em 0.7em; font-size: 0.9em; }
+  .lt { margin-bottom: 0.35em; }
+  .row { display: grid; grid-template-columns: 3.4em 1fr auto; gap: 0.4em; padding: 0.4em 0.3em; border-bottom: 1px solid var(--line-soft); border-radius: 0.3em;
+    outline: 0.16em solid transparent; outline-offset: -0.16em; transition: outline-color 0.3s, background 0.3s; }
+  .tag { padding: 0.05em 0.5em; border-radius: 1em; background: #fbe3d9; color: #a2462b; font-size: 0.85em; } .tag.ok { background: #dcefe2; color: #2c7a4b; }
+  .island { background: var(--surface); border: 1px solid var(--line); border-radius: 0.55em; }
+  .tabs { padding: 0.3em 0.4em; background: var(--surface-2); border-bottom: 1px solid var(--line); border-radius: 0.55em 0.55em 0 0; }
+  .tab { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.2em 0.7em 0.2em 0.4em; border-radius: 0.4em; background: var(--surface); }
+  .mini { width: 1.5em; fill: var(--claude); }
+  .talk { display: flex; flex-direction: column; justify-content: center; gap: 0.3em; min-height: 3.6em; padding: 0.35em 0.8em; box-sizing: border-box; font-family: var(--mono); font-size: 0.9em; }
+  .talk p { margin: 0; display: flex; align-items: center; gap: 0.5em; white-space: nowrap; }
+  .prompt, .dot { color: var(--muted); }
+  .typed { display: inline-block; overflow: hidden; width: calc(var(--n) * 1ch); }
+  .caret { width: 0.55em; height: 1.1em; border: 1px solid var(--text); }
+  .reply { transition: opacity 0.25s; }
+  .agentptr { position: absolute; left: 50%; top: 92%; z-index: 3; display: flex; align-items: flex-start; gap: 0.15em; pointer-events: none;
+    transition: left 0.8s cubic-bezier(0.5, 0, 0.3, 1), top 0.8s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.3s; }
+  .pointer, .cursor { width: 1.4em; fill: #17181b; stroke: #fff; stroke-width: 1.5; }
+  .pointer { margin: -0.15em 0 0 -0.25em; }
+  .who { width: 2.2em; margin-top: 1.1em; fill: var(--claude); filter: drop-shadow(0 1px 0 #fff); }
+  .cursor { position: absolute; left: 93%; top: 92%; z-index: 3; pointer-events: none; transition: left 0.75s cubic-bezier(0.5, 0, 0.3, 1), top 0.75s cubic-bezier(0.5, 0, 0.3, 1); }
+
+  /* you ask: typed, then sent (your line greyed, the input empty) */
+  .pointback[data-step='ask'] .typed { animation: type 1.3s steps(var(--n)) both; }
+  @keyframes type { from { width: 0; } }
+  .pointback:not([data-step='ask']) .you { color: var(--muted); }
+  .pointback:not([data-step='ask']) .you .caret { display: none; }
+  .pointback:is([data-step='ask'], [data-step='sent'], [data-step='point1'], [data-step='point2']) .reply { opacity: 0; }
+  /* the agent points: its pointer there, the row outlined, the label over the pane; in both, then it is gone */
+  .pointback:is([data-step='ask'], [data-step='sent'], [data-step='answer'], [data-step='clear']) .agentptr { opacity: 0; }
+  .pointback:is([data-step='point1'], [data-step='point2'], [data-step='answer']) .p-ben :is(.hit), .pointback:is([data-step='point2'], [data-step='answer'], [data-step='clear']) .p-cleo .hit {
+    outline-color: var(--mark); background: color-mix(in srgb, var(--mark) 14%, transparent);
+  }
+  .pointback:is([data-step='point1'], [data-step='point2'], [data-step='answer']) .p-ben .cap, .pointback:is([data-step='point2'], [data-step='answer'], [data-step='clear']) .p-cleo .cap { opacity: 1; }
+  /* until you click there: your click in Ben's page clears his */
+  .pointback:not([data-step='clear']) .cursor { opacity: 0.0; }
+  .pointback[data-step='clear'] .cursor { opacity: 1; }
+
+  @container (max-width: 560px) {
+    .pointback { padding: 3cqi; font-size: 7px; }
+    .p-cleo .row:nth-of-type(5) { display: none; }
+  }
+</style>

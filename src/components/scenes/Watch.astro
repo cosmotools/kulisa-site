@@ -1,0 +1,153 @@
+---
+// See what the agent does, drawn inside a small Kulisa: the agent's own pointer goes to a button in the buyer's page,
+// the button is outlined, the click is marked, a caption over the pane says what it does; then the order, and the
+// agent points at it in the seller's page (the guide, "Working with the agent"). Without JavaScript or with reduced
+// motion: the end of it.
+import Mark from '../Mark.astro';
+import { claude } from './claude';
+const say: Record<string, string> = {
+  start: 'As Anna, putting the Stoneware mug in the cart',
+  add: 'As Anna, putting the Stoneware mug in the cart',
+  order: 'Placing the order',
+  ordered: 'Placing the order',
+  check: 'Checking it shows up for Ben',
+  done: 'It does: order #1044, outlined in Ben’s page',
+};
+---
+<div class="watch" data-step="done" role="img"
+  aria-label="In Kulisa, the agent’s pointer clicks Add to cart in the buyer’s page: the button is outlined, the click is marked and the pane says agent: click; then it places the order and points at it in the seller’s page.">
+  <div class="win">
+    <div class="titlebar"><Mark size={14} /><span class="dots"><i></i><i></i><i></i></span></div>
+    <div class="panes">
+      <div class="pane buyer">
+        <div class="ph"><span>🦊</span><b>anna</b><span class="cap c-buyer"><span class="c-add">↖ agent: click</span><span class="c-order">↖ agent: click</span></span></div>
+        <div class="pb">
+          <div class="top"><span class="logo">Hearth <em>&</em> Co</span><span class="cart">Cart <b class="n0">0</b><b class="n1">1</b></span><span class="btn b-order">Place order</span></div>
+          <div class="cards">
+            <div class="card"><span class="img i1"></span><span class="t">Stoneware mug</span><span class="btn b-add">Add to cart</span></div>
+            <div class="card"><span class="img i2"></span><span class="t">Linen towel</span><span class="btn">Add to cart</span></div>
+          </div>
+          <span class="agentptr" aria-hidden="true">
+            <svg class="pointer" viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L10 19z" /></svg>
+            <svg class="who" viewBox="0 0 12 7" shape-rendering="crispEdges">{claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}</svg>
+          </span>
+        </div>
+      </div>
+      <div class="pane seller">
+        <div class="ph"><span>🐸</span><b>ben</b><span class="cap c-seller"><span class="c-check">↖ agent: navigate</span><span class="c-done">↖ agent: points at: #1044</span></span></div>
+        <div class="pb">
+          <div class="top"><span class="logo">Orders to ship</span></div>
+          <div class="rows">
+            <div class="row new"><span>#1044</span><span>Anna</span><span>Mug</span><span class="tag">new</span></div>
+            <div class="row"><span>#1043</span><span>Iris</span><span>Throw</span><span class="tag">new</span></div>
+            <div class="row"><span>#1042</span><span>Omar</span><span>Towel</span><span class="tag ok">shipped</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="island">
+      <div class="tabs"><span class="tab"><svg class="mini" viewBox="0 0 12 7" shape-rendering="crispEdges" aria-hidden="true">{claude.map(([x, y, w, h]) => <rect x={x} y={y} width={w} height={h} />)}</svg>Claude Code</span></div>
+      <p class="line"><span class="dot">●</span>{Object.entries(say).map(([k, v]) => <span class="said" data-say={k}>{v}</span>)}</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // The scene played while in view, step by step; again after a pause.
+  const steps: [string, number][] = [['start', 1300], ['add', 1500], ['order', 1300], ['ordered', 1300], ['check', 1300], ['done', 3200]];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const scene of reduce ? [] : document.querySelectorAll<HTMLElement>('.watch')) {
+    let timer = 0, running = false;
+    const play = (i: number) => {
+      if (!running) return;
+      const [step, ms] = steps[i % steps.length]!;
+      scene.dataset.step = step;
+      // The agent's pointer to the button this step clicks, wherever the layout put it.
+      const selector = ({ start: '.b-add', add: '.b-add', order: '.b-order', ordered: '.b-order' } as Record<string, string>)[step];
+      const target = selector ? scene.querySelector<HTMLElement>(selector) : null;
+      const ptr = scene.querySelector<HTMLElement>('.agentptr')!, box = ptr.offsetParent as HTMLElement;
+      if (target) {
+        const t = target.getBoundingClientRect(), b = box.getBoundingClientRect();
+        ptr.style.left = `${t.left - b.left + t.width * 0.55}px`; ptr.style.top = `${t.top - b.top + t.height * 0.55}px`;
+      }
+      timer = window.setTimeout(() => play(i + 1), ms);
+    };
+    new IntersectionObserver(([e]) => {
+      if (e!.isIntersecting && !running) { running = true; play(0); }
+      else if (!e!.isIntersecting && running) { running = false; clearTimeout(timer); scene.dataset.step = 'done'; }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  .watch {
+    --claude: #d97757; --mark: #2f6fd6; --brand: #b4532a;
+    height: 100%; box-sizing: border-box; padding: 3.5cqi 5cqi;
+    font-size: max(8px, 2.05cqi);
+    background: radial-gradient(70% 90% at 50% 120%, var(--glow), transparent 70%);
+  }
+  .win {
+    height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto 1fr auto; gap: 0.6em; padding: 0 0.6em 0.6em;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 0.9em; box-shadow: 0 24px 50px -30px rgba(20, 22, 26, 0.45);
+  }
+  .titlebar { display: flex; align-items: center; justify-content: space-between; height: 2em; }
+  .dots { display: flex; gap: 0.4em; } .dots i { width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--line); }
+  .panes { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.6em; min-height: 0; }
+  .pane { display: grid; grid-template-rows: auto 1fr; min-height: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 0.55em; overflow: hidden; }
+  .ph { display: flex; align-items: center; gap: 0.4em; padding: 0.4em 0.6em; border-bottom: 1px solid var(--line-soft); white-space: nowrap; }
+  .cap { position: relative; flex: 1; height: 1.3em; color: var(--mark); }
+  .cap span { position: absolute; left: 0.3em; opacity: 0; transition: opacity 0.2s; }
+  .pb { position: relative; padding: 0.6em 0.7em; display: flex; flex-direction: column; gap: 0.6em; min-height: 0; }
+  .top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+  .logo em { font-style: normal; color: var(--brand); }
+  .cart { font-weight: 500; color: var(--muted); }
+  .cart b { display: inline-grid; place-items: center; min-width: 1.3em; height: 1.3em; margin-left: 0.2em; border-radius: 1em; background: var(--line-soft); color: var(--text); font-size: 0.85em; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; }
+  .card { display: flex; flex-direction: column; gap: 0.35em; padding: 0.5em; border: 1px solid var(--line); border-radius: 0.5em; }
+  .img { height: 2.2em; border-radius: 0.35em; } .i1 { background: linear-gradient(135deg, #8fb0e0, #5b84c4); } .i2 { background: linear-gradient(135deg, #e2bd8a, #c49559); }
+  .t { font-weight: 600; font-size: 0.9em; }
+  .btn { position: relative; align-self: flex-start; padding: 0.3em 0.7em; border-radius: 0.4em; background: var(--brand); color: #fff; font-size: 0.85em; font-weight: 600; white-space: nowrap; outline: 0.16em solid transparent; outline-offset: 0.12em; transition: outline-color 0.2s; }
+  .btn::after { content: ''; position: absolute; left: 55%; top: 55%; width: 2.2em; height: 2.2em; margin: -1.1em; border-radius: 50%; border: 0.18em solid var(--mark); opacity: 0; pointer-events: none; }
+  .top .cart { margin-left: auto; margin-right: 0.6em; }
+  /* the agent's pointer, Claude beside it: not a person's */
+  .agentptr { position: absolute; left: 95%; top: 110%; z-index: 2; display: flex; align-items: flex-start; gap: 0.15em; pointer-events: none;
+    transition: left 0.9s cubic-bezier(0.5, 0, 0.3, 1), top 0.9s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.3s; }
+  .pointer { width: 1.4em; margin: -0.15em 0 0 -0.25em; fill: #17181b; stroke: #fff; stroke-width: 1.5; }
+  .who { width: 2.2em; margin-top: 1.1em; fill: var(--claude); filter: drop-shadow(0 1px 0 #fff); }
+  .rows { display: flex; flex-direction: column; font-size: 0.85em; }
+  .row { display: grid; grid-template-columns: 3.2em 1fr 1fr auto; gap: 0.4em; align-items: center; padding: 0.45em 0.3em; border-bottom: 1px solid var(--line-soft); outline: 0.16em solid transparent; outline-offset: -0.16em; border-radius: 0.3em; transition: outline-color 0.3s, background 0.3s, opacity 0.4s; }
+  .tag { padding: 0.1em 0.5em; border-radius: 1em; background: #fbe3d9; color: #a2462b; font-size: 0.85em; }
+  .tag.ok { background: #dcefe2; color: #2c7a4b; }
+  .island { background: var(--surface); border: 1px solid var(--line); border-radius: 0.55em; }
+  .tabs { padding: 0.3em 0.4em; background: var(--surface-2); border-bottom: 1px solid var(--line); border-radius: 0.55em 0.55em 0 0; }
+  .tab { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.2em 0.7em 0.2em 0.4em; border-radius: 0.4em; background: var(--surface); }
+  .mini { width: 1.5em; fill: var(--claude); }
+  .line { position: relative; margin: 0; height: 2.4em; font-family: var(--mono); font-size: 0.9em; }
+  .line .dot { position: absolute; left: 0.8em; line-height: 2.4em; color: var(--muted); }
+  .said { position: absolute; left: 2.2em; right: 0.8em; line-height: 2.4em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transition: opacity 0.2s; }
+
+  /* the pointer goes where the script puts it; gone once the agent works in the seller's page */
+  .watch:is([data-step='check'], [data-step='done']) .agentptr { opacity: 0; }
+  /* the click: outlined, marked, said */
+  .watch[data-step='add'] .b-add, .watch[data-step='ordered'] .b-order { outline-color: var(--mark); }
+  .watch[data-step='add'] .b-add::after, .watch[data-step='ordered'] .b-order::after { animation: click 0.9s ease-out; }
+  @keyframes click { 0% { opacity: 1; transform: scale(0.3); } 100% { opacity: 0; transform: scale(1.4); } }
+  .watch[data-step='add'] .c-add, .watch[data-step='ordered'] .c-order, .watch[data-step='check'] .c-check, .watch[data-step='done'] .c-done { opacity: 1; }
+  .watch:is([data-step='start']) .n1, .watch:not([data-step='start']) .n0 { display: none; }
+  .watch[data-step='start'] .n0 { display: inline-grid; }
+  .watch:is([data-step='ordered'], [data-step='check'], [data-step='done']) .n1 { display: none; }
+  .watch:is([data-step='ordered'], [data-step='check'], [data-step='done']) .n0 { display: inline-grid; }
+  /* the seller's page: the new order once placed, outlined when the agent points at it */
+  .watch:is([data-step='start'], [data-step='add'], [data-step='order'], [data-step='ordered']) .row.new { display: none; }
+  .watch[data-step='done'] .row.new { outline-color: var(--mark); background: color-mix(in srgb, var(--mark) 14%, transparent); }
+  /* the terminal: what it is doing */
+  .watch[data-step='start'] [data-say='start'], .watch[data-step='add'] [data-say='add'], .watch[data-step='order'] [data-say='order'],
+  .watch[data-step='ordered'] [data-say='ordered'], .watch[data-step='check'] [data-say='check'], .watch[data-step='done'] [data-say='done'] { opacity: 1; }
+
+  /* a phone: smaller type, the second product card left out */
+  @container (max-width: 560px) {
+    .watch { padding: 3cqi; font-size: 7px; }
+    .cards { grid-template-columns: 1fr; } .card + .card { display: none; }
+    .img { height: 1.6em; }
+  }
+</style>

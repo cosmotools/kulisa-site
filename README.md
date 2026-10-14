@@ -22,10 +22,12 @@ All copy, links and media slots are in `src/content/site.ts`:
 
 - **Feature media:** put `pick.mp4` in `public/media/` and a poster frame `pick.jpg` in `src/assets/`, then set
   `video: 'pick.mp4', poster: 'pick.jpg'` on that feature. An image instead: `image: 'pick.png'` (in `src/assets/`),
-  shown at its own proportions. Without media, a feature shows a 16:9 placeholder. Features in `more` are small cards.
+  shown at its own proportions. A scene drawn in HTML instead (where a screenshot would show less):
+  `scene: 'dictation'`, a component in `src/components/scenes/` named in `Media.astro`. Without media, a feature shows
+  a 16:9 placeholder. Features in `more` are small cards.
 - **Hero:** `hero.media.image` (the window screenshot, `src/assets/hero-window.png`) or `hero.media.video`.
 - **Screenshots:** taken from a Kulisa with its own data folder (never the author's), on a demo shop driven by a real
-  Claude Code; full windows keep their transparent rounded corners (PNG with alpha), crops are opaque.
+  Claude Code: `npm run shots` (below).
 - **Downloads:** fill in the `url` of each platform in `downloads`. Empty links show "Coming soon".
 - **Logo:** the app's icon (from `kulisa/assets/icon.svg`, copied to `tools/app-icon.svg`) next to a text
   wordmark: `src/components/Mark.astro`, `public/favicon.svg`. `logo.mark: false` hides the icon.
@@ -33,6 +35,36 @@ All copy, links and media slots are in `src/content/site.ts`:
 `public/og.png` (the social card) and the icons are rendered from `tools/`: `tools/og.html` with headless
 Chrome at 1200×630, `node tools/favicon-ico.mjs` for `favicon.ico`, `apple-touch-icon.png` from `tools/touch.svg`;
 `tools/icon.html` shows `public/favicon.svg` full-window, for rendering it to PNG with headless Chrome.
+
+## Screenshots
+
+Taken again when the app changes, by one command (`tools/shots/`):
+
+```sh
+npm run shots -- --signin        # once: sign in to Claude Code and Codex in the window that opens
+npm run shots                    # every scene, from the app's develop; pictures in .shots/out/
+npm run shots -- --ref v0.2.0    # from a tag, a branch or a commit of the app
+npm run shots -- pick watch      # these scenes only
+npm run shots -- --visible       # on your screen, to watch it play
+npm run shots -- --save          # and copy the pictures into src/assets/
+```
+
+- **The app** is a clone of its own in `.shots/app` (from `../kulisa`, else GitHub), fetched and checked out at
+  `--ref` each run, its dependencies installed when its lock file changes. Never the author's running Kulisa.
+- **The stage** (`tools/shots/stage.ts`) starts it in Electron with a new data folder each run (`.shots/data`) and
+  the demo shop Hearth & Co (`tools/shots/shop/`: a buyer, a seller and an admin, signed in by name, no passwords)
+  as its project, in `$TMPDIR/kulisa-shots`, with its back end (`tools/shots/shop-api/`) as a second repository
+  for the scene `repos`. On Linux it runs on a screen of its own (Xvfb and openbox, as the
+  app's tests), so it takes no focus; the pictures are at twice the window's 1440×900.
+- **The agents** are a real Claude Code and Codex (Codex takes over in the scene `handover`), their accounts
+  signed in once by a human (`--signin`) and kept in `.shots/accounts/`. Their emails are the human's own: every
+  picture shows `you@hearth.shop` in their place. The hero scene gives it a real task; the other scenes act through the window's own IPC and the
+  agent's MCP tools.
+- **The scenarios** (`tools/shots/SCENARIOS.md`): what each picture is for, how it is made, what it must show.
+- **The scenes** (`tools/shots/scenes.ts`) are the pictures, each named after its file in `src/assets/`. When the
+  app's window changes, a selector or a tool's name there changes. A scene that fails saves
+  `.shots/out/failed.png` and `failed-terminal.txt`: what the window and the agent's terminal showed. Naming scenes
+  replaces only their pictures in `.shots/out/`, and `--save` copies only those.
 
 **GitHub links** (header and footer) go to the app's repository, `links.repo` in `src/content/site.ts`.
 
@@ -45,7 +77,8 @@ no copy. The build reads the first of these that has a `guide.md` (`src/lib/guid
 1. `.kulisa/docs`: in CI, the deploy workflow checks out the app's `docs/` from `main` there (not committed).
 2. `../kulisa/docs`: locally, the app's repository cloned next to this one. `npm run dev` reloads on its changes.
 
-The guide's `#` heading is the page's title; its `##` headings make the table of contents. A relative link in
+The guide's window picture (`images/kulisa.png`) is shown as the site's own hero, `src/assets/hero-window.png`,
+so it is as new as the last `npm run shots` (`src/lib/markdown.ts`); its other pictures are the guide's. The guide's `#` heading is the page's title; its `##` headings make the table of contents. A relative link in
 the guide (other than its pictures) fails the build with the link named: fix it in the app's repository.
 The live page follows the guide's `main` on every deploy: a push here, a release of the app (below), the weekly
 rebuild, or a manual run (*Actions → Deploy to GitHub Pages → Run workflow*).

@@ -43,7 +43,8 @@ accounts — and developers too. Write so a non-programmer understands every lin
 - **Download** (the author, 2026-10-13): the buttons lead to the files of the latest GitHub Release of
   `cosmotools/kulisa`, asked at build time (`src/lib/release.ts`); the app's release starts this site's deploy, so
   they name the new version at once. Windows (`.exe`) and Linux (`.deb`, `.rpm`); macOS "Coming soon" until it is
-  built. The visitor's own system first. One place to change: `downloads` in `src/content/site.ts`. No email form,
+  built. Only the visitor's own system, the others behind "Other systems" (the author,
+  2026-10-15); all of them when the system is not known (a phone). One place to change: `downloads` in `src/content/site.ts`. No email form,
   no waitlist.
 - **Price:** say it is **free**. Nothing about open source, licenses, plans or paid tiers.
 - **No trackers, no analytics, no cookie banner.** Fonts self-hosted or system fonts, no third-party requests.
@@ -60,12 +61,14 @@ One page. Suggested sections, adjust if a better order appears:
    tabs and sign-ins, and keeping the connections in your head.
 3. **How it works:** profiles (each its own signed-in person) → panes side by side → an agent you can watch and
    point at things for.
-4. **Features, only what is built** (the guide and `profiles.md`, `tasks.md`, `window.md`): profiles that keep
-   their sign-ins across restarts; panes in a grid you can arrange; see what the agent does; point and tell; the agent points back; workspaces (several
-   tasks at once; Linux only so far); choosing the agent (Claude Code, Codex or a terminal; Kulisa installs it);
-   a stage per project; macOS, Windows, Linux.
+4. **Features, only what is built** (the guide and `profiles.md`, `tasks.md`, `window.md`), and only what sets
+   Kulisa apart (the author, 2026-10-15: what any app has, a grid of panes, a browser's tabs, platforms, looks silly
+   on a landing page): sign in once for every task; one agent runs out, another goes on; see what the agent does;
+   point and tell; dictation; the agent points back; several tasks at once; front end and back end in one task;
+   the agent you choose; work sign-ins that hold; yours, on your computer.
 5. **Coming later** (short, no dates): timeline, a mailbox per profile, saving a run as a test, profile reset.
-6. **FAQ:** Is it free? Which agents work? Does the agent ever sign in for me? (No: a human always signs in.)
+6. **FAQ:** Is it free? Which agents work? Does the agent ever sign in for me? (The truth, the author 2026-10-15: never to real accounts, a human signs
+   in; to the user's own local app as its test users, Kulisa typing the password.)
    Where is my data? (On your computer.) Which platforms?
 7. **Footer:** © cosmotools, Docs, link to the app's repository `github.com/cosmotools/kulisa` (the header links
    to both too).
@@ -73,7 +76,8 @@ One page. Suggested sections, adjust if a better order appears:
 **Docs** (`/docs`, `src/pages/docs.astro`): the app's `docs/guide.md` and its `docs/images/`, rendered at build
 time, never copied into this repository (CI checks it out into `.kulisa/`; locally `../kulisa/docs` is read). The
 text is the guide's: don't rewrite it on the site; tell the author what reads badly, it is fixed in the app's
-repository. A relative link in the guide fails the build.
+repository. One exception (the author, 2026-10-15): the guide's window picture (`images/kulisa.png`) is shown as
+the site's own hero (`src/assets/hero-window.png`, retaken by `npm run shots`): `src/lib/markdown.ts`. A relative link in the guide fails the build.
 
 Truthfulness: claim only what the guide describes as built. Don't name or compare competitors.
 
@@ -105,10 +109,15 @@ logo are in).
 
 ## Screenshots
 
-The author provides them (taken from the app with `KULISA_SHOT=/tmp/kulisa.png npm start` in `../kulisa`).
+Taken by one command, `npm run shots` (README, Screenshots). **Each picture's idea and scenario is in
+`tools/shots/SCENARIOS.md`: read it before changing a picture, a scene or a feature's text, and keep it current.**
 **Never take screenshots of the author's own running Kulisa or its profiles**: they hold real sign-ins to work
 accounts. The current ones are of a demo shop (Hearth & Co) in a Kulisa with its own data folder. Put images in
 `src/assets/` so Astro optimizes them.
+
+Where a picture of the window shows less than the feature does (a key held, a voice), the slot shows a **scene
+drawn in HTML** instead (the author, 2026-10-15): `scene` in `src/content/site.ts`, a component in
+`src/components/scenes/`. It shows what the app really does, in the site's look, no invented features.
 
 ## Working rules
 

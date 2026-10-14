@@ -1,0 +1,105 @@
+---
+// Dictation, drawn: the right Ctrl held, the microphone listening, the words arriving in the agent's input. What the
+// app does (the guide, "Dictation"), not a picture of it. Without JavaScript or with reduced motion: the words there.
+const words = 'the refund button does nothing for Ben, check it as the seller'.split(' ');
+---
+<div class="dictation" data-state="full" role="img"
+  aria-label="Holding the right Ctrl key while speaking: the microphone listens, and the words appear in the agent’s input, to read and send.">
+  <div class="term">
+    <div class="tabs">
+      <span class="tab"><span class="spark" aria-hidden="true">✳</span>Claude Code</span>
+      <span class="mic"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" /></svg><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></span>
+    </div>
+    <p class="input"><span class="prompt">❯</span> {words.map((w, i) => <span class="w" style={`--i: ${i}`}>{w} </span>)}<span class="caret"></span></p>
+  </div>
+  <div class="keys" aria-hidden="true">
+    <kbd>Alt</kbd><kbd class="ctrl">Ctrl</kbd>
+    <span class="hint">right Ctrl: hold, speak, let go</span>
+  </div>
+</div>
+
+<script>
+  // The scene played while in view: Ctrl down, the words one by one, Ctrl up, a pause, again.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const scene of reduce ? [] : document.querySelectorAll<HTMLElement>('.dictation')) {
+    const words = [...scene.querySelectorAll<HTMLElement>('.w')];
+    let timer = 0, running = false;
+    const sleep = (ms: number) => new Promise<void>((r) => { timer = window.setTimeout(r, ms); });
+    const play = async () => {
+      while (running) {
+        scene.dataset.state = 'idle'; words.forEach((w) => w.classList.remove('on'));
+        await sleep(900); if (!running) return;
+        scene.dataset.state = 'listening';
+        await sleep(500);
+        for (const w of words) { if (!running) return; w.classList.add('on'); await sleep(170); }
+        await sleep(700); if (!running) return;
+        scene.dataset.state = 'done';
+        await sleep(2600);
+      }
+    };
+    new IntersectionObserver(([e]) => {
+      if (e!.isIntersecting && !running) { running = true; void play(); }
+      else if (!e!.isIntersecting && running) { running = false; clearTimeout(timer); scene.dataset.state = 'full'; }
+    }).observe(scene);
+  }
+</script>
+
+<style>
+  .dictation {
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 22px;
+    padding: 6% 7%;
+    background: radial-gradient(70% 90% at 50% 120%, var(--glow), transparent 70%);
+  }
+  .term {
+    width: 100%;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 12px 30px -18px rgba(20, 22, 26, 0.35);
+    overflow: hidden;
+  }
+  .tabs {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 8px 6px 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+    font-size: 0.8rem;
+  }
+  .tab { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 6px; background: var(--surface); }
+  .spark { color: #d97757; }
+  .mic {
+    display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 7px; border-radius: 999px;
+    color: var(--muted); transition: background 0.2s, color 0.2s;
+  }
+  .mic svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .wave { display: none; align-items: center; gap: 2px; height: 14px; }
+  .wave i { width: 2px; height: 100%; border-radius: 1px; background: currentColor; animation: wave 0.9s ease-in-out infinite; }
+  .wave i:nth-child(2) { animation-delay: -0.2s; } .wave i:nth-child(3) { animation-delay: -0.45s; }
+  .wave i:nth-child(4) { animation-delay: -0.1s; } .wave i:nth-child(5) { animation-delay: -0.6s; }
+  @keyframes wave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+  .input { box-sizing: content-box; margin: 0; padding: 18px 16px 20px; font-family: var(--mono); font-size: 0.9rem; line-height: 1.55; height: 3lh; } /* three lines: the whole phrase, nothing moves as it comes */
+  .prompt { color: var(--muted); }
+  .w.on { animation: word 0.25s ease-out; }
+  @keyframes word { from { opacity: 0; } }
+  .caret { display: inline-block; width: 0.55em; height: 1.1em; vertical-align: -0.2em; border: 1px solid var(--text); }
+  .keys { display: flex; align-items: center; gap: 8px; }
+  kbd {
+    min-width: 54px; padding: 8px 12px; text-align: center;
+    font: 600 0.85rem var(--sans); color: var(--text);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    box-shadow: 0 3px 0 var(--line); transition: transform 0.12s, box-shadow 0.12s, background 0.12s, color 0.12s;
+  }
+  .hint { margin-left: 6px; font-size: 0.85rem; color: var(--muted); }
+
+  /* listening (and the full, still picture): Ctrl down, the microphone on */
+  .dictation:is([data-state='listening'], [data-state='full']) .ctrl {
+    transform: translateY(3px); box-shadow: 0 0 0 var(--line); background: var(--accent); color: var(--surface); border-color: var(--accent);
+  }
+  .dictation:is([data-state='listening'], [data-state='full']) .mic {
+    color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .dictation:is([data-state='listening'], [data-state='full']) .wave { display: inline-flex; }
+  .dictation:is([data-state='idle'], [data-state='listening']) .w:not(.on) { display: none; }
+  @media (max-width: 520px) {
+    .dictation { gap: 14px; padding: 5%; }
+    .input { font-size: 0.78rem; padding: 12px; height: 4lh; }
+    kbd { min-width: 44px; padding: 6px 9px; }
+  }
+</style>

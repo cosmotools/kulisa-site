@@ -16,24 +16,28 @@ const icons: Record<string, string> = {
         <span>Download for {d.name}</span>
       </a>
     ) : (
-      <span class="dl dl-soon">
+      <span class="dl dl-soon" data-os={d.os}>
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" set:html={icons[d.os]} />
         <span>{d.name} · coming soon</span>
       </span>
     ))}
   </div>
+  <button type="button" class="downloads-all" hidden>Other systems</button>
   <p class="downloads-note">{ready ? <>Free{version && <> · version {version}</>}</> : <><strong>Coming soon</strong> · free</>}</p>
 </div>
 
 <script>
-  // The visitor's own system first, the others quieter.
+  // Only the visitor's own system; "Other systems" shows the rest. Without a known system (a phone), all of them.
   const ua = navigator.userAgent;
-  const os = /Windows/.test(ua) ? 'windows' : /Mac OS X|Macintosh/.test(ua) ? 'macos' : /Linux|X11/.test(ua) && !/Android/.test(ua) ? 'linux' : null;
-  if (os) for (const box of document.querySelectorAll('.downloads-buttons')) {
-    const mine = [...box.querySelectorAll<HTMLElement>(`a.dl[data-os="${os}"]`)];
-    if (!mine.length) continue;
-    box.prepend(...mine);
-    for (const a of box.querySelectorAll('a.dl')) a.classList.toggle('dl-other', !mine.includes(a as HTMLElement));
+  const os = /Windows/.test(ua) ? 'windows' : /Mac OS X|Macintosh/.test(ua) && !/iPhone|iPad/.test(ua) ? 'macos' : /Linux|X11/.test(ua) && !/Android/.test(ua) ? 'linux' : null;
+  if (os) for (const box of document.querySelectorAll<HTMLElement>('.downloads')) {
+    const all = [...box.querySelectorAll<HTMLElement>('.dl')];
+    const others = all.filter((el) => el.dataset.os !== os);
+    if (others.length === all.length) continue;
+    for (const el of others) el.hidden = true;
+    const more = box.querySelector<HTMLButtonElement>('.downloads-all')!;
+    more.hidden = false;
+    more.addEventListener('click', () => { for (const el of others) el.hidden = false; more.hidden = true; });
   }
 </script>
 
@@ -47,7 +51,13 @@ const icons: Record<string, string> = {
     background: var(--text); color: var(--bg);
   }
   .dl:hover { opacity: 0.9; }
-  .dl-other { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+  .dl[hidden] { display: none; }
+  .downloads-all {
+    border: 0; background: none; padding: 2px 4px; font: inherit; font-size: 0.95rem;
+    color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
+  .downloads-all:hover { color: var(--text); }
+  .downloads-all[hidden] { display: none; }
   .dl-soon {
     background: var(--surface); color: var(--muted);
     border: 1px solid var(--line); font-weight: 500;
