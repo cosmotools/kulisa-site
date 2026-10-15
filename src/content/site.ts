@@ -31,13 +31,15 @@ export interface Feature extends Media {
   wide?: boolean;
 }
 
-// What a search engine shows (and an AI assistant reads): what Kulisa is, in plain words; the page's heading says the
-// same (hero), so a visitor from a search finds what they clicked.
+// The search snippet: what a person sees in the results and decides by (and what an AI assistant reads). It answers
+// what Kulisa is and whom it is for, in plain words that read as a sentence (the author, 2026-10-15): the title within
+// 60 characters, the description within 160, nothing that goes stale (no agent names, no list of systems). The page's
+// heading (hero) says the same in its own words, so a visitor from a search finds what they clicked.
 export const meta = {
-  title: 'Kulisa — the home where your AI agent works on the web',
+  title: 'Kulisa: your AI agent in several browser accounts at once',
   description:
-    'Your AI agent works in every role and account it needs, until everything works. Watch every step, or take a ' +
-    'break.',
+    'A free desktop app. Your AI agent works in several signed-in browsers side by side, as every user of your app, ' +
+    'until everything works. Watch, or take a break.',
 };
 
 export const links = {
