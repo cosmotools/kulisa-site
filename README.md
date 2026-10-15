@@ -32,6 +32,12 @@ All copy, links and media slots are in `src/content/site.ts`:
 - **Logo:** the app's icon (from `kulisa/assets/icon.svg`, copied to `tools/app-icon.svg`) next to a text
   wordmark: `src/components/Mark.astro`, `public/favicon.svg`. `logo.mark: false` hides the icon.
 
+**For search engines and AI assistants:** the page's `<title>` and description are `meta` in `src/content/site.ts`,
+in the words people search with (the pitch stays the page's heading). The main page (`src/pages/index.astro`)
+describes the app as structured data (schema.org `SoftwareApplication`: version and download from the latest release)
+and its FAQ (`FAQPage`), in the layout's `head` slot; `/llms.txt` (`src/pages/llms.txt.ts`) is the page as plain text
+for AI assistants, built from the same content.
+
 `public/og.png` (the social card) and the icons are rendered from `tools/`: `tools/og.html` with headless
 Chrome at 1200×630, `node tools/favicon-ico.mjs` for `favicon.ico`, `apple-touch-icon.png` from `tools/touch.svg`;
 `tools/icon.html` shows `public/favicon.svg` full-window, for rendering it to PNG with headless Chrome.

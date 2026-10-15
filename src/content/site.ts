@@ -31,11 +31,13 @@ export interface Feature extends Media {
   wide?: boolean;
 }
 
+// What a search engine shows (and an AI assistant reads): what Kulisa is, in plain words; the page's heading says the
+// same (hero), so a visitor from a search finds what they clicked.
 export const meta = {
-  title: 'Kulisa — your AI agent works until it’s done',
+  title: 'Kulisa — the home where your AI agent works on the web',
   description:
-    'Your AI agent works in your signed-in browsers, side by side: it checks the result as every user and fixes ' +
-    'until it works. Watch, or take a break. Free for Windows and Linux; macOS soon.',
+    'Your AI agent works in every role and account it needs, until everything works. Watch every step, or take a ' +
+    'break.',
 };
 
 export const links = {
@@ -62,11 +64,8 @@ export const downloads: { id: string; os: 'macos' | 'windows' | 'linux'; name: s
 export const logo = { mark: true };
 
 export const hero = {
-  pitch: 'Your AI agent works until it’s done. Watch every step, or take a break.',
-  sub:
-    'Kulisa puts several browsers side by side in one window, each signed in as a different person, and an AI agent ' +
-    'of your choice to work in them. It does the work, checks the result as every user — the buyer and the seller, ' +
-    'the sender and the receiver, the admin and the user — fixes what’s wrong, and goes again until it works.',
+  pitch: 'Kulisa is the home where your AI agent works on the web.',
+  sub: 'In every role and account it needs, until everything works. Watch every step, or take a break.',
   media: {
     image: 'hero-window.png',
     alt: 'The Kulisa window: a shop open as a buyer, a seller and an admin side by side. The agent placed an order as the buyer, ' +
@@ -238,6 +237,14 @@ export const faq = [
   {
     q: 'Is it free?',
     a: 'Yes. Kulisa is free.',
+  },
+  {
+    q: 'Can an AI agent test my web app as several users?',
+    a: 'Yes, that is what Kulisa is made for. Tell Claude Code or Codex what to build or check: it acts as one profile and checks the result as another (a message sent by one person must arrive for the other; an order placed by the buyer must show up for the seller), fixes what’s wrong, and checks again. You watch every step in the panes, or take a break.',
+  },
+  {
+    q: 'Can I be signed in to several accounts of one site at once?',
+    a: 'Yes. Each profile is a separate browser with its own sign-ins and cookies, so one site can be open as several accounts side by side, in one window: a buyer and a seller, an admin and a user, several clients’ accounts. You sign in to each once, by hand, and it stays signed in after a restart.',
   },
   {
     q: 'How do I install it?',

@@ -9,19 +9,7 @@ const { title = meta.title, description = meta.description, noindex = false } = 
 const url = new URL(Astro.url.pathname.replace(/(index)?\.html$/, ''), Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
 
-// Structured data for search engines: what the app is, where it runs, that it is free.
-const app = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'Kulisa',
-  description: meta.description,
-  url: Astro.site?.href,
-  image: ogImage.href,
-  applicationCategory: 'UtilitiesApplication',
-  operatingSystem: 'Windows, Linux',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  publisher: { '@type': 'Organization', name: 'cosmotools' },
-};
+// A page's structured data (the app, the FAQ) goes in the `head` slot: src/pages/index.astro.
 ---
 <!doctype html>
 <html lang="en">
@@ -51,7 +39,7 @@ const app = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(app)} />}
+    <slot name="head" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>

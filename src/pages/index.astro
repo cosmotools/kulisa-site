@@ -5,9 +5,47 @@ import Icon from '../components/Icon.astro';
 import Downloads from '../components/Downloads.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { hero, problem, steps, features, more, later, faq, forDevelopers } from '../content/site';
+import { getImage } from 'astro:assets';
+import { meta, links, hero, problem, steps, features, more, later, faq, forDevelopers } from '../content/site';
+import { latestDownloads } from '../lib/release';
+import heroWindow from '../assets/hero-window.png';
+
+// Structured data for search engines and AI assistants, on this page only: what the app is, where it runs, that it
+// is free, where to get it; and the FAQ, its answers as plain text.
+const { version } = await latestDownloads();
+const screenshot = await getImage({ src: heroWindow, width: 1280, format: 'webp' });
+const ogImage = new URL('/og.png', Astro.site);
+const appData = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Kulisa',
+  description: meta.description,
+  url: Astro.site?.href,
+  image: ogImage.href,
+  screenshot: new URL(screenshot.src, Astro.site).href,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Windows, Linux',
+  ...(version && { softwareVersion: version }),
+  downloadUrl: `${links.releases}/latest`,
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  featureList: features.map((f) => f.title),
+  sameAs: [links.repo],
+  publisher: { '@type': 'Organization', name: 'cosmotools' },
+};
+const faqData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a.replace(/<[^>]+>/g, '') },
+  })),
+};
 ---
 <Base>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(appData)} />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqData)} />
   <SiteHeader sections={[
     { href: '#how', label: 'How it works' },
     { href: '#features', label: 'Features' },
@@ -44,7 +82,7 @@ import { hero, problem, steps, features, more, later, faq, forDevelopers } from 
     <section id="how" class="how" aria-labelledby="how-title">
       <div class="wrap">
         <span class="eyebrow">How it works</span>
-        <h2 id="how-title" class="section-title">Set the stage once. Then watch.</h2>
+        <h2 id="how-title" class="section-title">Sign in once as each person. Then watch your agent work.</h2>
         <ol class="steps">
           {steps.map((s, i) => (
             <li>
@@ -105,7 +143,7 @@ import { hero, problem, steps, features, more, later, faq, forDevelopers } from 
     <section id="faq" class="faq" aria-labelledby="faq-title">
       <div class="wrap narrow">
         <span class="eyebrow">FAQ</span>
-        <h2 id="faq-title" class="section-title">Questions</h2>
+        <h2 id="faq-title" class="section-title">Frequently asked questions</h2>
         <div class="qa">
           {faq.map((item) => (
             <details>
@@ -125,7 +163,7 @@ import { hero, problem, steps, features, more, later, faq, forDevelopers } from 
 
     <section class="cta" aria-labelledby="cta-title">
       <div class="wrap">
-        <h2 id="cta-title" class="section-title">Everyone on one stage.</h2>
+        <h2 id="cta-title" class="section-title">Everyone on one stage, your AI agent in the wings.</h2>
         <Downloads />
       </div>
     </section>
@@ -141,7 +179,7 @@ import { hero, problem, steps, features, more, later, faq, forDevelopers } from 
   .hero { padding-top: 48px; text-align: center; overflow: hidden; }
   .hero-text { max-width: 780px; margin: 0 auto; }
   .hero h1 { font-size: clamp(2.3rem, 6vw, 4rem); letter-spacing: -0.035em; }
-  .hero-sub { color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.25rem); margin: 20px auto 32px; max-width: 36em; }
+  .hero-sub { color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.25rem); margin: 20px auto 32px; max-width: 36em; text-wrap: balance; }
   .hero-media { margin: 56px auto 0; width: min(1240px, 100% - 40px); position: relative; }
   .hero-media :global(.media) { border: 0; border-radius: 10px; background: none; box-shadow: var(--shadow-hero); }
   .hero-media::before {

@@ -6,7 +6,11 @@ import { downloads, links } from '../content/site';
 // reached, so the build never fails over it: the buttons then lead to the releases page.
 export type Download = { id: string; os: string; name: string; url: string };
 
-export async function latestDownloads(): Promise<{ version: string | null; list: Download[] }> {
+// Asked once per build, however many places show it.
+let latest: Promise<{ version: string | null; list: Download[] }> | undefined;
+export const latestDownloads = () => (latest ??= fetchLatest());
+
+async function fetchLatest(): Promise<{ version: string | null; list: Download[] }> {
   const repo = new URL(links.repo).pathname.replace(/^\/|\/$/g, '');
   const token = process.env.GITHUB_TOKEN;
   let release: { tag_name: string; assets: { name: string; browser_download_url: string }[] } | null = null;
