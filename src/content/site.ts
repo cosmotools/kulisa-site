@@ -266,7 +266,7 @@ export const faq = [
   },
   {
     q: 'Do company sign-ins work?',
-    a: 'Microsoft sign-ins are tested, including ones passed on to another company’s sign-in page. You sign in by hand in a profile, as in Chrome, and the sign-in lasts across restarts. Each profile presents itself to websites as Google Chrome.',
+    a: 'Microsoft sign-ins are tested, including ones passed on to another company’s sign-in page. You sign in by hand in a profile, as in Chrome, and the sign-in lasts across restarts.',
   },
   {
     q: 'Where is my data?',
@@ -284,6 +284,6 @@ export const forDevelopers = [
   'The agent drives profiles through Kulisa’s MCP server: Playwright-based tools that take a profile id. <code>@playwright/mcp</code> also works through a per-profile CDP proxy, without a remote-debugging port.',
   'Claude Code starts with a Kulisa plugin (MCP config, a skill on profiles, hooks); Codex gets the MCP server as a config override. Other CLI agents run unchanged in a real terminal, started in your shell in the task’s folder (direnv, nvm and mise apply), and find the server in <code>KULISA_MCP_URL</code>.',
   'A pick types a reference into the agent’s prompt: the profile, the tab and a Playwright locator. The agent looks at the live page with its tools, including that tab’s console messages and network requests.',
-  'Profiles present as Google Chrome of the same engine version (User-Agent, <code>Sec-CH-UA*</code>, <code>navigator.userAgentData</code>). Session cookies are kept across restarts, encrypted with the OS keyring (<code>safeStorage</code>).',
+  'Profiles present as what they are, Kulisa on Chromium (Chromium’s brands, not Google Chrome’s): Google signs such a profile in, and refused one that presented as Chrome. Session cookies are kept across restarts, encrypted with the OS keyring (<code>safeStorage</code>).',
   'A task is a git worktree on its own branch next to the project (<code>myshop@task-2</code>), one per repository it works in, with copies of the profiles taken from their master and an MCP URL of its own. Its app runs on its own ports: <code>KULISA_PORT_OFFSET</code> is in the agent’s environment.',
 ];
