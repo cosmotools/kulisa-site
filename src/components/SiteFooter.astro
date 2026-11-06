@@ -7,6 +7,7 @@ const year = new Date().getFullYear();
   <div class="wrap">
     <p>© {year} cosmotools · <a href={links.docs}>Docs</a> · <a href={links.repo} target="_blank" rel="noopener">GitHub</a></p>
     <p class="name-note"><i>Kulisa</i> (<span lang="ru">кулиса</span>) is Russian for the wings of a theatre stage.</p>
+    <p class="ownership">Kulisa and all cosmotools projects are owned by <a href="https://netmate.dev" target="_blank" rel="noopener">Netmate</a>.</p>
   </div>
 </footer>
 
@@ -15,4 +16,5 @@ const year = new Date().getFullYear();
   .foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
   .foot a { color: var(--muted); }
   .foot a:hover { color: var(--text); }
+  .ownership { flex-basis: 100%; }
 </style>
