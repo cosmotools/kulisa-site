@@ -1,7 +1,7 @@
 # kulisa-site
 
-The site of [Kulisa](https://kulisa.app): the landing page and the user guide (`/docs`), static, built with
-[Astro](https://astro.build).
+The site of [Kulisa](https://kulisa.app), an agentic IDE where you and your chosen coding agent develop, run, and
+test software together: the landing page and the user guide (`/docs`), static, built with [Astro](https://astro.build).
 
 ## Run
 
