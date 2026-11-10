@@ -18,14 +18,14 @@ export const GET: APIRoute = async ({ site }) => {
     '',
     `> ${hero.pitch} ${hero.sub}`,
     '',
-    'A free desktop app. Each role or account is a browser profile with its own ' +
-      'sign-ins, cookies and tabs, shown side by side in one window. The AI agent you choose (Claude Code, Codex, or ' +
-      'another agent that runs in a terminal) works in them from a built-in terminal: it does the work, checks the ' +
-      'result as every user, fixes what’s wrong, and goes again. You sign in to real accounts yourself, by hand; ' +
-      'everything stays on your computer.',
+    'A free desktop IDE with code editing, change review, browser profiles, interactive terminals and task results. ' +
+      'The coding agent you choose runs in a real terminal. Test web apps as different users, or develop and try ' +
+      'CLI and TUI apps in terminals you can both operate. Each browser profile keeps its own sign-ins, cookies ' +
+      'and tabs. You sign in to real accounts yourself, by hand. Kulisa runs on your computer; what your agent ' +
+      'reads is sent to the AI service that agent uses.',
     '',
-    `Made first for developing web apps with several users at once (a buyer, a seller, an admin), and ` +
-      'good for any work in web apps as several people: testers, support, product managers, several clients’ accounts.',
+    'Use the shared workspace for software development, testing, DevOps and technical analysis. ' +
+      'Choose the browsers, terminal tools and files your task needs.',
     '',
     '## Links',
     '',

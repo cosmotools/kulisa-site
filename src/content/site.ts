@@ -32,14 +32,13 @@ export interface Feature extends Media {
 }
 
 // The search snippet: what a person sees in the results and decides by (and what an AI assistant reads). It answers
-// what Kulisa is and whom it is for, in plain words that read as a sentence (the author, 2026-10-15): the title within
+// what Kulisa is and whom it is for, in plain words that read as a sentence (the author's choice): the title within
 // 60 characters, the description within 160, nothing that goes stale (no agent names, no list of systems). The page's
 // heading (hero) says the same in its own words, so a visitor from a search finds what they clicked.
 export const meta = {
-  title: 'Kulisa: your AI agent in several browser accounts at once',
+  title: 'Kulisa: an agentic IDE for web and CLI development',
   description:
-    'A free desktop app. Your AI agent works in several signed-in browsers side by side, as every user of your app, ' +
-    'until everything works. Watch, or take a break.',
+    'Kulisa is an agentic IDE where you and your chosen coding agent develop, run, and test software together.',
 };
 
 export const links = {
@@ -66,8 +65,8 @@ export const downloads: { id: string; os: 'macos' | 'windows' | 'linux'; name: s
 export const logo = { mark: true };
 
 export const hero = {
-  pitch: 'Kulisa is the home where your AI agent works on the web.',
-  sub: 'In every role and account it needs, until everything works. Watch every step, or take a break.',
+  pitch: 'Your agentic IDE.',
+  sub: 'Develop, run, and test software together with your chosen coding agent. Shared browsers and interactive terminals for web, CLI and TUI apps.',
   media: {
     image: 'hero-window.png',
     alt: 'The Kulisa window: a shop open as a buyer, a seller and an admin side by side. The agent placed an order as the buyer, ' +
@@ -76,32 +75,32 @@ export const hero = {
 };
 
 export const problem = {
-  title: 'One app, many people, too many windows',
+  title: 'Keep development and verification together',
   text:
-    'When people use an app together, checking it means being all of them. ' +
-    'A message is sent by one person and must arrive for another; an order placed by a buyer must show up for the seller.',
+    'A change needs more than a code review: run the software, try it yourself and check what happens. ' +
+    'Kulisa puts your agent, code, browser profiles and interactive terminals in one workspace.',
   points: [
-    { title: 'Windows everywhere', text: 'A browser window per person, private tabs, a second browser for the third.' },
-    { title: 'Signing in, again', text: 'Sessions expire, tabs get mixed up, and you sign in as the wrong person.' },
-    { title: 'It all lives in your head', text: 'Which window is who, what you just did, and what should have happened.' },
+    { title: 'Follow the work', text: 'See the pages and terminal apps your agent operates, and take over when you need to.' },
+    { title: 'Try the result', text: 'Check a web app as different users or operate the same CLI or TUI app together.' },
+    { title: 'Show what needs to change', text: 'Point at a page element or send selected text from a page or terminal to your agent.' },
   ],
 };
 
 export const steps = [
   {
-    label: 'The cast',
-    title: 'A profile for each person',
-    text: 'Create a profile for each person and sign in once, by hand. Each one keeps its own sign-ins, cookies and tabs, like a separate browser.',
+    label: 'Your agent',
+    title: 'Bring your coding agent and code',
+    text: 'Choose an agent such as Claude Code or Codex and start from an idea, a folder or a repository. The agent runs in a real terminal with your project’s environment.',
   },
   {
-    label: 'The stage',
-    title: 'Side by side, in one window',
-    text: 'Their browsers sit next to each other. Send a message as one person and watch it arrive for the other.',
+    label: 'Your environments',
+    title: 'Open browsers or interactive terminals',
+    text: 'Use a browser profile for each user of a web app, or run a CLI or TUI app in a terminal you can both operate. Sign in to real accounts yourself.',
   },
   {
-    label: 'The wings',
-    title: 'An agent you can watch',
-    text: 'An AI agent of your choice runs in a terminal inside the window and can click and type in any profile. You see every step, and you can point at anything on a page to tell it what’s wrong.',
+    label: 'Your result',
+    title: 'Develop, run and test together',
+    text: 'Let the agent make changes, try the running software yourself and show what needs attention. Browse and edit files, review changes, and inspect reports and screenshots in the same workspace.',
   },
 ];
 
@@ -129,7 +128,7 @@ export const features: Feature[] = [
     icon: 'watch',
     status: 'ready',
     title: 'See what the agent does',
-    text: 'Every click and keystroke the agent makes is marked on the page, and a caption on the pane says what it is doing right now. Nothing happens off stage.',
+    text: 'The agent’s browser actions are marked on the page, and a caption on the pane says what it is doing. You can also read and operate the same interactive terminal apps it uses.',
     scene: 'watch',
   },
   {
@@ -188,6 +187,13 @@ export const features: Feature[] = [
 // Smaller things, shown as cards without media.
 export const more: Feature[] = [
   {
+    id: 'terminals',
+    icon: 'agent',
+    status: 'ready',
+    title: 'CLI and TUI apps, together',
+    text: 'Run an interactive command-line app in Stage. You and your agent can read its current screen, type and send keys to the same process. Restart after a change, or set a fixed terminal size to check the layout. Browser profiles are optional.',
+  },
+  {
     id: 'signin',
     icon: 'signin',
     status: 'ready',
@@ -237,12 +243,20 @@ export const later: Feature[] = [
 // Answers may contain simple HTML (<code>, <a>).
 export const faq = [
   {
+    q: 'What is Kulisa?',
+    a: 'Kulisa is an agentic IDE where you and your chosen coding agent develop, run, and test software together. It brings code, browser profiles, interactive terminals and task results into one desktop workspace.',
+  },
+  {
     q: 'Is it free?',
     a: 'Yes. Kulisa is free.',
   },
   {
     q: 'Can an AI agent test my web app as several users?',
-    a: 'Yes, that is what Kulisa is made for. Tell Claude Code or Codex what to build or check: it acts as one profile and checks the result as another (a message sent by one person must arrive for the other; an order placed by the buyer must show up for the seller), fixes what’s wrong, and checks again. You watch every step in the panes, or take a break.',
+    a: 'Yes. Tell your coding agent what to build or check: it acts as one profile and checks the result as another (a message sent by one person must arrive for the other; an order placed by the buyer must show up for the seller), fixes what’s wrong, and checks again. You can watch its browser actions and try the result yourself.',
+  },
+  {
+    q: 'Can I develop and test CLI and TUI apps too?',
+    a: 'Yes. Run the app in an interactive Stage terminal. Your agent can inspect its current screen, send text and keys, resize it and rerun it after code changes. You can use the same running app yourself; no browser profile is required.',
   },
   {
     q: 'Can I be signed in to several accounts of one site at once?',
@@ -254,7 +268,7 @@ export const faq = [
   },
   {
     q: 'Do I need to be a developer?',
-    a: 'No. Anyone who works in a web app as several people at once — testers, support, product managers, people with several accounts — can use profiles side by side. The agent is there when you want it.',
+    a: 'You can ask your agent to write the code and check its work together. Testers, DevOps engineers and technical analysts can also use the shared browsers, interactive terminals and files for their tasks. You choose the tools and accounts those tasks need.',
   },
   {
     q: 'Which agents work?',
@@ -280,10 +294,11 @@ export const faq = [
 
 // The short part for developers. Technical words are fine here.
 export const forDevelopers = [
+  'Stage terminals run CLI and TUI apps through a PTY. The agent reads the rendered screen and sends text or keys through MCP; the human operates the same process. Terminals use your shell and credentials, without machine or credential isolation.',
   'Each profile is a persistent Chromium session of its own (cookies, storage, tabs), in an Electron window.',
   'The agent drives profiles through Kulisa’s MCP server: Playwright-based tools that take a profile id. <code>@playwright/mcp</code> also works through a per-profile CDP proxy, without a remote-debugging port.',
   'Claude Code starts with a Kulisa plugin (MCP config, a skill on profiles, hooks); Codex gets the MCP server as a config override. Other CLI agents run unchanged in a real terminal, started in your shell in the task’s folder (direnv, nvm and mise apply), and find the server in <code>KULISA_MCP_URL</code>.',
   'A pick types a reference into the agent’s prompt: the profile, the tab and a Playwright locator. The agent looks at the live page with its tools, including that tab’s console messages and network requests.',
   'Profiles present as what they are, Kulisa on Chromium (Chromium’s brands, not Google Chrome’s): Google signs such a profile in, and refused one that presented as Chrome. Session cookies are kept across restarts, encrypted with the OS keyring (<code>safeStorage</code>).',
-  'A task is a git worktree on its own branch next to the project (<code>myshop@task-2</code>), one per repository it works in, with copies of the profiles taken from their master and an MCP URL of its own. Its app runs on its own ports: <code>KULISA_PORT_OFFSET</code> is in the agent’s environment.',
+  'A task gets its own git branch and worktree when code changes need one, one per repository it works in, with copies of the browser profiles and an MCP URL of its own. Projects without git can use their existing folder. The agent chooses free ports for its running apps.',
 ];
